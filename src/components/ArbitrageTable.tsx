@@ -25,11 +25,11 @@ export const ArbitrageTable = () => {
     queryKey: ['arbitrageOpportunities'],
     queryFn: fetchArbitrageOpportunities,
     refetchInterval: 5000, // Refetch every 5 seconds
-    onError: () => {
+    onSuccess: () => {
+      // Optional: Show toast on successful data fetch
       toast({
-        title: "Error Fetching Opportunities",
-        description: "Unable to fetch latest arbitrage opportunities",
-        variant: "destructive",
+        title: "Updated Opportunities",
+        description: "Latest arbitrage opportunities loaded",
       });
     }
   });
@@ -39,6 +39,15 @@ export const ArbitrageTable = () => {
       <div className="glass-panel p-4">
         <h2 className="text-xl font-semibold mb-4">Live Arbitrage Opportunities</h2>
         <p className="text-muted-foreground">Loading opportunities...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="glass-panel p-4">
+        <h2 className="text-xl font-semibold mb-4">Live Arbitrage Opportunities</h2>
+        <p className="text-destructive">Error loading opportunities</p>
       </div>
     );
   }
