@@ -7,6 +7,7 @@ export interface ArbitrageOpportunity {
   estimatedProfit: number;
   gasEstimate: number;
   timestamp: Date;
+  exchange: string; // Added exchange field
 }
 
 export interface TradeHistory {
