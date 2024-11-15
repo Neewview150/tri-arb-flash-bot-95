@@ -31,3 +31,8 @@ export interface SimulationResult {
   slippage: number;
   route: string[];
 }
+
+export interface SimulationRequest {
+  amount: string;
+  tokens: string[];
+}

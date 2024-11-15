@@ -1,11 +1,48 @@
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useQuery } from '@tanstack/react-query';
+import { useToast } from '@/components/ui/use-toast';
 
-interface ArbitrageTableProps {
-  opportunities: ArbitrageOpportunity[];
-}
+const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
+  // This would be replaced with your actual API call
+  // For demo, we'll generate random opportunities
+  return Array.from({ length: 5 }, (_, i) => ({
+    id: `${i}`,
+    tokenA: ['ETH', 'BTC', 'USDT'][Math.floor(Math.random() * 3)],
+    tokenB: ['USDT', 'ETH', 'BTC'][Math.floor(Math.random() * 3)],
+    tokenC: ['BTC', 'USDT', 'ETH'][Math.floor(Math.random() * 3)],
+    profitPercentage: Math.random() * 2,
+    estimatedProfit: Math.random() * 1000,
+    gasEstimate: Math.random() * 100,
+    timestamp: new Date(),
+  }));
+};
 
-export const ArbitrageTable = ({ opportunities }: ArbitrageTableProps) => {
+export const ArbitrageTable = () => {
+  const { toast } = useToast();
+  
+  const { data: opportunities = [], isError, isLoading } = useQuery({
+    queryKey: ['arbitrageOpportunities'],
+    queryFn: fetchArbitrageOpportunities,
+    refetchInterval: 5000, // Refetch every 5 seconds
+    onError: () => {
+      toast({
+        title: "Error Fetching Opportunities",
+        description: "Unable to fetch latest arbitrage opportunities",
+        variant: "destructive",
+      });
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="glass-panel p-4">
+        <h2 className="text-xl font-semibold mb-4">Live Arbitrage Opportunities</h2>
+        <p className="text-muted-foreground">Loading opportunities...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Live Arbitrage Opportunities</h2>
