@@ -25,8 +25,8 @@ export const ArbitrageTable = () => {
     queryKey: ['arbitrageOpportunities'],
     queryFn: fetchArbitrageOpportunities,
     refetchInterval: 5000, // Refetch every 5 seconds
-    onSuccess: () => {
-      // Optional: Show toast on successful data fetch
+    onSettled: () => {
+      // Show toast on query settlement (success or error)
       toast({
         title: "Updated Opportunities",
         description: "Latest arbitrage opportunities loaded",
