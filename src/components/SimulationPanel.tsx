@@ -1,30 +1,28 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
-import { useQuery } from '@tanstack/react-query';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
+  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
+  const [selectedExchange, setSelectedExchange] = useState<string>('');
 
-  // Simulate a trade with the given amount
-  const simulateTrade = async (amount: string): Promise<SimulationResult> => {
-    // This would be replaced with your actual API call
-    const response = await fetch('/api/simulate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, tokens: ['ETH', 'USDT', 'BTC'] })
-    });
+  useEffect(() => {
+    const handleSimulateArbitrage = (event: CustomEvent) => {
+      setSelectedTokens(event.detail.tokens);
+      setSelectedExchange(event.detail.exchange);
+    };
+
+    window.addEventListener('simulateArbitrage', handleSimulateArbitrage as EventListener);
     
-    if (!response.ok) {
-      throw new Error('Simulation failed');
-    }
-    
-    return response.json();
-  };
+    return () => {
+      window.removeEventListener('simulateArbitrage', handleSimulateArbitrage as EventListener);
+    };
+  }, []);
 
   const handleSimulate = async () => {
     try {
@@ -34,7 +32,7 @@ export const SimulationPanel = () => {
         estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
         gasCost: Math.random() * 50,
         slippage: Math.random() * 0.01,
-        route: ['ETH', 'USDT', 'BTC']
+        route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC']
       };
       
       setLastSimulation(mockResult);
@@ -57,6 +55,16 @@ export const SimulationPanel = () => {
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Trade Simulation</h2>
       <div className="space-y-4">
+        {selectedTokens.length > 0 && (
+          <div className="p-2 bg-secondary/20 rounded-lg">
+            <p className="text-sm font-medium">Selected Route:</p>
+            <p className="text-sm">{selectedTokens.join(' → ')}</p>
+            {selectedExchange && (
+              <p className="text-sm mt-1">Exchange: {selectedExchange}</p>
+            )}
+          </div>
+        )}
+        
         <div>
           <label className="block text-sm mb-2">Flash Loan Amount (USDT)</label>
           <Input
@@ -67,6 +75,7 @@ export const SimulationPanel = () => {
             min="0"
           />
         </div>
+        
         <Button 
           onClick={handleSimulate}
           className="w-full bg-primary hover:bg-primary/90"

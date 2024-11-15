@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
 import { ArbitrageOpportunity } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   // Simulated API call - replace with actual API endpoint
@@ -39,8 +40,40 @@ export const ArbitrageTable = () => {
   const { data: opportunities, isLoading, error } = useQuery({
     queryKey: ['arbitrageOpportunities'],
     queryFn: fetchArbitrageOpportunities,
-    refetchInterval: 5000 // Refetch every 5 seconds
+    refetchInterval: 5000
   });
+
+  const handleSimulate = (opportunity: ArbitrageOpportunity) => {
+    // Dispatch event to update simulation panel
+    const event = new CustomEvent('simulateArbitrage', { 
+      detail: {
+        tokens: [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC],
+        exchange: opportunity.exchange
+      }
+    });
+    window.dispatchEvent(event);
+    
+    toast({
+      title: "Simulation Ready",
+      description: "The trade has been loaded into the simulation panel",
+    });
+  };
+
+  const handleExecute = async (opportunity: ArbitrageOpportunity) => {
+    toast({
+      title: "Executing Trade",
+      description: "Initiating real trade execution...",
+    });
+    
+    // Here you would implement the actual trade execution
+    // For demo purposes, we'll just show a success message
+    setTimeout(() => {
+      toast({
+        title: "Trade Executed",
+        description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+      });
+    }, 2000);
+  };
 
   if (isLoading) {
     return <div className="text-center p-4">Scanning all exchanges for opportunities...</div>;
@@ -61,6 +94,7 @@ export const ArbitrageTable = () => {
             <TableHead>Est. Profit</TableHead>
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -74,6 +108,22 @@ export const ArbitrageTable = () => {
               <TableCell>${opp.estimatedProfit.toFixed(2)}</TableCell>
               <TableCell>${opp.gasEstimate.toFixed(2)}</TableCell>
               <TableCell>{new Date(opp.timestamp).toLocaleTimeString()}</TableCell>
+              <TableCell className="space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleSimulate(opp)}
+                >
+                  Simulate
+                </Button>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={() => handleExecute(opp)}
+                >
+                  Execute
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
