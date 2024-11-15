@@ -10,6 +10,7 @@ export const mockArbitrageOpportunities: ArbitrageOpportunity[] = [
     estimatedProfit: 123.45,
     gasEstimate: 45.67,
     timestamp: new Date(),
+    exchange: 'Binance'
   },
   // Add more mock opportunities...
 ];
