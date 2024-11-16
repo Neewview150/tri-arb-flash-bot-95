@@ -63,19 +63,22 @@ export const ArbitrageTable = () => {
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
     try {
-      if (!import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL) {
+      const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL;
+      const privateKey = import.meta.env.VITE_PRIVATE_KEY;
+
+      if (!providerUrl) {
         toast({
           title: "Configuration Error",
-          description: "Blockchain provider URL is not configured",
+          description: "Blockchain provider URL is not configured. Please set VITE_BLOCKCHAIN_PROVIDER_URL in your .env file.",
           variant: "destructive",
         });
         return;
       }
 
-      if (!import.meta.env.VITE_PRIVATE_KEY) {
+      if (!privateKey) {
         toast({
           title: "Configuration Error",
-          description: "Private key is not configured",
+          description: "Private key is not configured. Please set VITE_PRIVATE_KEY in your .env file.",
           variant: "destructive",
         });
         return;

@@ -19,7 +19,7 @@ const contractABI = [
 ];
 
 // Initialize a provider
-const provider = new ethers.JsonRpcProvider(providerUrl);
+const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
 // Function to validate private key
 const validatePrivateKey = (privateKey: string | undefined): string => {
@@ -29,10 +29,10 @@ const validatePrivateKey = (privateKey: string | undefined): string => {
   
   try {
     // Try to create a wallet with the private key to validate it
-    new ethers.Wallet(privateKey);
-    return privateKey;
+    const wallet = new ethers.Wallet(privateKey);
+    return wallet.privateKey;
   } catch (error) {
-    throw new Error('Invalid private key format');
+    throw new Error('Invalid private key format: ' + error.message);
   }
 };
 
