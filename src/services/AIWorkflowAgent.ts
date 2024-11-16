@@ -51,8 +51,13 @@ class AIWorkflowAgent {
 
   // Method to analyze arbitrage opportunities
   public analyzeArbitrage(opportunities: ArbitrageOpportunity[]): ArbitrageOpportunity[] {
-    // Simulate AI analysis logic
-    return opportunities.filter(opportunity => opportunity.profitPercentage > 1);
+    console.log('Starting analysis of arbitrage opportunities...');
+    const recommendedOpportunities = opportunities.filter(opportunity => {
+      console.log(`Analyzing opportunity: ${opportunity.tokenA} → ${opportunity.tokenB} → ${opportunity.tokenC} with profit percentage: ${opportunity.profitPercentage}`);
+      return opportunity.profitPercentage > 1;
+    });
+    console.log(`Recommended opportunities: ${recommendedOpportunities.map(o => `${o.tokenA} → ${o.tokenB} → ${o.tokenC}`).join(', ')}`);
+    return recommendedOpportunities;
   }
 
   // Method to provide insights for simulations

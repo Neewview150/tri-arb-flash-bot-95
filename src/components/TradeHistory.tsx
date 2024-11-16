@@ -19,8 +19,10 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
     const fetchTradeHistory = async () => {
       try {
         // Replace with actual API call or blockchain interaction
+        console.log('Fetching trade history data...');
         const response = await fetch('/api/trade-history');
         const data = await response.json();
+        console.log('Trade history data fetched successfully.');
         let filteredData = data;
         if (filterBy !== 'all') {
           filteredData = data.filter(trade => trade.type === filterBy);
@@ -35,7 +37,7 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
         });
         setTradeHistory(filteredData);
       } catch (error) {
-        console.error('Error fetching trade history:', error);
+        console.error('Error fetching trade history data:', error);
       }
     };
 
@@ -43,11 +45,15 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
   }, []);
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(event.target.value);
+    const newSortBy = event.target.value;
+    console.log(`Sorting trade history by: ${newSortBy}`);
+    setSortBy(newSortBy);
   };
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterBy(event.target.value);
+    const newFilterBy = event.target.value;
+    console.log(`Filtering trade history by: ${newFilterBy}`);
+    setFilterBy(newFilterBy);
   };
 
   const handlePageChange = (newPage: number) => {

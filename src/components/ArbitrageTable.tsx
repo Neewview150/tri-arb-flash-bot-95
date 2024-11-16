@@ -38,6 +38,7 @@ export const ArbitrageTable = () => {
   const recommendedOpportunities = aiAgent.analyzeArbitrage(opportunities || []);
 
   const handleSimulate = (opportunity: ArbitrageOpportunity) => {
+    console.log(`Simulating arbitrage for tokens: ${opportunity.tokenA} → ${opportunity.tokenB} → ${opportunity.tokenC} on ${opportunity.exchange} with estimated profit: $${opportunity.estimatedProfit.toFixed(2)}`);
     const event = new CustomEvent('simulateArbitrage', { 
       detail: {
         tokens: [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC],
@@ -54,6 +55,7 @@ export const ArbitrageTable = () => {
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
     try {
+      console.log(`Executing arbitrage for tokens: ${opportunity.tokenA} → ${opportunity.tokenB} → ${opportunity.tokenC} on ${opportunity.exchange} with estimated profit: $${opportunity.estimatedProfit.toFixed(2)}`);
       const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL;
       const privateKey = import.meta.env.VITE_PRIVATE_KEY;
 
@@ -100,7 +102,7 @@ export const ArbitrageTable = () => {
         description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
       });
     } catch (error) {
-      console.error('Error executing flash loan:', error);
+      console.error(`Error executing flash loan for tokens: ${opportunity.tokenA} → ${opportunity.tokenB} → ${opportunity.tokenC} on ${opportunity.exchange}`, error);
       toast({
         title: "Execution Failed",
         description: error instanceof Error ? error.message : "There was an error executing the trade.",
