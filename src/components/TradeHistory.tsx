@@ -2,6 +2,12 @@ import { TradeHistory as TradeHistoryType } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 
+// Jest and React Testing Library imports for testing
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+
 interface TradeHistoryProps {
   trades: TradeHistoryType[];
 }

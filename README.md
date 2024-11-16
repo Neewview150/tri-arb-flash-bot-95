@@ -114,6 +114,24 @@ For issues and feature requests, please open an issue in the GitHub repository.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Architectural Design
+
+The Triangular Arbitrage Flash Loan Bot is designed with a modular architecture using React components to facilitate ease of development and maintenance. The main components of the application are:
+
+1. **ArbitrageTable**: This component is responsible for displaying real-time arbitrage opportunities. It fetches data from various exchanges and presents potential trades with profit estimates and gas costs.
+
+2. **SimulationPanel**: This component allows users to simulate trades before execution. It provides insights into potential profits, gas costs, and slippage, helping users make informed decisions.
+
+3. **TradeHistory**: This component displays a history of executed trades, showing details such as profit/loss, gas costs, and timestamps. It helps users track their trading performance over time.
+
+### Technologies Used
+
+- **React**: The application is built using React, a popular JavaScript library for building user interfaces. React's component-based architecture allows for efficient rendering and state management.
+
+- **ethers.js**: This library is used for interacting with the Ethereum blockchain. It provides utilities for managing wallets, sending transactions, and interacting with smart contracts.
+
+The choice of these technologies ensures a robust and scalable application, capable of handling real-time data and blockchain interactions efficiently.
+
 ## Disclaimer
 
 Trading cryptocurrencies carries risk. This bot is for educational purposes only. Always do your own research and trade responsibly.

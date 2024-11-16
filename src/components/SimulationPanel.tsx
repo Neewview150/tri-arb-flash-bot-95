@@ -6,6 +6,10 @@ import { SimulationResult } from '@/lib/types';
 import { initiateFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
 
+// Jest and React Testing Library imports for testing
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
   const { toast } = useToast();

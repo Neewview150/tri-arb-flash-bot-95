@@ -7,30 +7,35 @@ import { executeFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
-  const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
-  const symbols = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'SOL', 'DOT'];
+  try {
+    const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
+    const symbols = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'SOL', 'DOT'];
 
-  const mockOpportunities: ArbitrageOpportunity[] = [];
-  
-  exchanges.forEach(exchange => {
-    symbols.forEach((symbol, index) => {
-      if (Math.random() > 0.8) {
-        mockOpportunities.push({
-          id: `${exchange}-${symbol}-${Date.now()}`,
-          tokenA: symbol,
-          tokenB: symbols[(index + 1) % symbols.length],
-          tokenC: symbols[(index + 2) % symbols.length],
-          profitPercentage: Math.random() * 2,
-          estimatedProfit: Math.random() * 1000,
-          gasEstimate: Math.random() * 100,
-          timestamp: new Date(),
-          exchange: exchange
-        });
-      }
+    const mockOpportunities: ArbitrageOpportunity[] = [];
+    
+    exchanges.forEach(exchange => {
+      symbols.forEach((symbol, index) => {
+        if (Math.random() > 0.8) {
+          mockOpportunities.push({
+            id: `${exchange}-${symbol}-${Date.now()}`,
+            tokenA: symbol,
+            tokenB: symbols[(index + 1) % symbols.length],
+            tokenC: symbols[(index + 2) % symbols.length],
+            profitPercentage: Math.random() * 2,
+            estimatedProfit: Math.random() * 1000,
+            gasEstimate: Math.random() * 100,
+            timestamp: new Date(),
+            exchange: exchange
+          });
+        }
+      });
     });
-  });
-  
-  return mockOpportunities.sort((a, b) => b.profitPercentage - a.profitPercentage);
+    
+    return mockOpportunities.sort((a, b) => b.profitPercentage - a.profitPercentage);
+  } catch (error) {
+    console.error('Error fetching arbitrage opportunities:', error);
+    throw error;
+  }
 };
 
 export const ArbitrageTable = () => {
@@ -87,6 +92,7 @@ export const ArbitrageTable = () => {
       const amount = ethers.parseUnits('1000', 'ether');
       await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
       
+      console.log(`Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`);
       toast({
         title: "Trade Executed",
         description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
