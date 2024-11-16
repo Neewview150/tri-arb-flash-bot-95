@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 
 // Configuration for the blockchain provider and contract
-const providerUrl = process.env.BLOCKCHAIN_PROVIDER_URL || 'https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID';
-const contractAddress = process.env.FLASH_LOAN_CONTRACT_ADDRESS || '0xYourFlashLoanContractAddress';
+const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL || 'https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID';
+const contractAddress = import.meta.env.VITE_FLASH_LOAN_CONTRACT_ADDRESS || '0xYourFlashLoanContractAddress';
 const contractABI = [
   // ABI of the flash loan contract
   // Replace with the actual ABI of your flash loan contract
