@@ -5,6 +5,7 @@ import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { executeFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
+import { analyzeOpportunities } from '@/services/AIService';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
@@ -41,6 +42,8 @@ export const ArbitrageTable = () => {
     queryFn: fetchArbitrageOpportunities,
     refetchInterval: 5000
   });
+
+  const recommendedOpportunities = analyzeOpportunities(opportunities || []);
 
   const handleSimulate = (opportunity: ArbitrageOpportunity) => {
     const event = new CustomEvent('simulateArbitrage', { 
@@ -120,12 +123,13 @@ export const ArbitrageTable = () => {
             <TableHead>Est. Profit</TableHead>
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
+            <TableHead>AI Recommended</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {opportunities?.map((opp) => (
-            <TableRow key={opp.id}>
+            <TableRow key={opp.id} className={recommendedOpportunities.includes(opp) ? 'bg-yellow-100' : ''}>
               <TableCell className="font-medium">{opp.exchange}</TableCell>
               <TableCell>{`${opp.tokenA} → ${opp.tokenB} → ${opp.tokenC}`}</TableCell>
               <TableCell className={opp.profitPercentage > 1 ? 'text-green-500' : ''}>
@@ -134,6 +138,9 @@ export const ArbitrageTable = () => {
               <TableCell>${opp.estimatedProfit.toFixed(2)}</TableCell>
               <TableCell>${opp.gasEstimate.toFixed(2)}</TableCell>
               <TableCell>{new Date(opp.timestamp).toLocaleTimeString()}</TableCell>
+              <TableCell>
+                {recommendedOpportunities.includes(opp) ? 'Yes' : 'No'}
+              </TableCell>
               <TableCell className="space-x-2">
                 <Button 
                   variant="outline" 

@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
 import { initiateFlashLoan } from '@/services/flashLoanService';
+import { analyzeOpportunities } from '@/services/AIService';
 import { ethers } from 'ethers';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
+  const [aiRecommendations, setAiRecommendations] = useState<SimulationResult[]>([]);
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [selectedExchange, setSelectedExchange] = useState<string>('');
 
@@ -24,6 +26,10 @@ export const SimulationPanel = () => {
     return () => {
       window.removeEventListener('simulateArbitrage', handleSimulateArbitrage as EventListener);
     };
+
+    const opportunities = []; // Assume this is fetched or passed as props
+    const recommendedOpportunities = analyzeOpportunities(opportunities);
+    setAiRecommendations(recommendedOpportunities);
   }, []);
 
   const handleSimulate = async () => {
@@ -102,6 +108,19 @@ export const SimulationPanel = () => {
           />
         </div>
         
+        {aiRecommendations.length > 0 && (
+          <div className="p-2 bg-secondary/20 rounded-lg">
+            <h3 className="text-sm font-medium">AI Recommendations:</h3>
+            <ul className="text-sm list-disc list-inside">
+              {aiRecommendations.map((rec, index) => (
+                <li key={index}>
+                  {rec.route.join(' → ')} - Expected Profit: ${rec.estimatedProfit.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <Button 
           onClick={handleSimulate}
           className="w-full bg-primary hover:bg-primary/90"

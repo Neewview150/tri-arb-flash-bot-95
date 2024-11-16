@@ -1,6 +1,7 @@
 import { TradeHistory as TradeHistoryType } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge'; // Assuming a Badge component exists
 
 interface TradeHistoryProps {
   trades: TradeHistoryType[];
@@ -34,6 +35,7 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
             <TableHead>Profit/Loss</TableHead>
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
+            <TableHead>AI Recommended</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,6 +49,9 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
               <TableCell>${trade.profit.toFixed(2)}</TableCell>
               <TableCell>${trade.gasCost.toFixed(2)}</TableCell>
               <TableCell>{trade.timestamp.toLocaleTimeString()}</TableCell>
+              <TableCell>
+                {trade.aiRecommended && <Badge>AI</Badge>}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
