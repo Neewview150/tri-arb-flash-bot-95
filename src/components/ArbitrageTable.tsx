@@ -5,6 +5,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { executeTrade } from '@/lib/tradeExecution';
+import { requestFlashLoan } from '@/lib/flashLoanService';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   // Simulated API call - replace with actual API endpoint
@@ -63,33 +64,48 @@ export const ArbitrageTable = () => {
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
     try {
-      try {
+      toast({
+        title: "Requesting Flash Loan",
+        description: "Initiating flash loan for trade execution...",
+      });
+
+      const loanResult = await requestFlashLoan(opportunity);
+
+      if (!loanResult.success) {
         toast({
-          title: "Executing Trade",
-          description: "Initiating real trade execution...",
+          title: "Flash Loan Failed",
+          description: `Failed to obtain flash loan: ${loanResult.error}`,
+          variant: "destructive",
         });
+        return;
+      }
 
-        const result = await executeTrade(opportunity);
+      toast({
+        title: "Executing Trade",
+        description: "Flash loan obtained, executing trade...",
+      });
 
-        if (result.success) {
-          toast({
-            title: "Trade Executed",
-            description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
-          });
-        } else {
-          toast({
-            title: "Trade Failed",
-            description: `Failed to execute trade: ${result.error}`,
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
+      const tradeResult = await executeTrade(opportunity);
+
+      if (tradeResult.success) {
         toast({
-          title: "Execution Error",
-          description: `An error occurred: ${error.message}`,
+          title: "Trade Executed",
+          description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+        });
+      } else {
+        toast({
+          title: "Trade Failed",
+          description: `Failed to execute trade: ${tradeResult.error}`,
           variant: "destructive",
         });
       }
+    } catch (error) {
+      toast({
+        title: "Execution Error",
+        description: `An error occurred: ${error.message}`,
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {

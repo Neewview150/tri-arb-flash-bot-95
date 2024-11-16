@@ -60,6 +60,18 @@ export interface SimulationResult {
   route: string[];
 }
 
+export interface FlashLoanParameters {
+  amount: number;
+  interestRate: number;
+  duration: number;
+}
+
+export interface FlashLoanResult {
+  success: boolean;
+  error?: string;
+  transactionHash?: string;
+}
+
 export interface SimulationRequest {
   amount: string;
   tokens: string[];

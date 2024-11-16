@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ArbitrageOpportunity } from './types';
+import { ArbitrageOpportunity, FlashLoanParameters } from './types';
+import { requestFlashLoan, handleRepayment } from './flashLoanService';
 
 interface TradeExecutionResult {
   success: boolean;
@@ -45,9 +46,33 @@ export const executeTrade = async (
   opportunity: ArbitrageOpportunity
 ): Promise<TradeExecutionResult> => {
   try {
+    // Request a flash loan
+    const flashLoanParams: FlashLoanParameters = {
+      amount: opportunity.estimatedProfit,
+      interestRate: 0.05, // Example interest rate
+      duration: 1, // Example duration
+    };
+    const loanResult = await requestFlashLoan(flashLoanParams);
+
+    if (!loanResult.success) {
+      return { success: false, error: loanResult.error };
+    }
+
     const authToken = await authenticateExchange(opportunity.exchange);
-    const result = await createTradeOrder(authToken, opportunity);
-    return result;
+    const tradeResult = await createTradeOrder(authToken, opportunity);
+
+    if (!tradeResult.success) {
+      return { success: false, error: tradeResult.error };
+    }
+
+    // Repay the flash loan
+    const repaymentResult = await handleRepayment(flashLoanParams);
+
+    if (!repaymentResult.success) {
+      return { success: false, error: repaymentResult.error };
+    }
+
+    return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }

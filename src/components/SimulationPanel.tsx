@@ -8,6 +8,8 @@ import { Select, SelectItem } from '@/components/ui/select';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
+  const [interestRate, setInterestRate] = useState('0.05');
+  const [duration, setDuration] = useState('1');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<{ tokenA: string; tokenB: string; tokenC: string }>({ tokenA: 'ETH', tokenB: 'USDT', tokenC: 'BTC' });
@@ -35,7 +37,9 @@ export const SimulationPanel = () => {
         estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
         gasCost: Math.random() * 50,
         slippage: Math.random() * 0.01,
-        route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC']
+        route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC'],
+        interestRate: parseFloat(interestRate),
+        duration: parseInt(duration, 10)
       };
       
       setLastSimulation(mockResult);
@@ -74,6 +78,29 @@ export const SimulationPanel = () => {
             <SelectItem value="centralized">Centralized</SelectItem>
             <SelectItem value="decentralized">Decentralized</SelectItem>
           </Select>
+        </div>
+
+        <div>
+          <label className="block text-sm mb-2">Interest Rate (%)</label>
+          <Input
+            type="number"
+            value={interestRate}
+            onChange={(e) => setInterestRate(e.target.value)}
+            className="w-full"
+            min="0"
+            step="0.01"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-2">Loan Duration (blocks)</label>
+          <Input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full"
+            min="1"
+          />
         </div>
           <label className="block text-sm mb-2">Flash Loan Amount (USDT)</label>
           <Input
