@@ -29,6 +29,7 @@ export const SimulationPanel = () => {
 
   const handleSimulate = async () => {
     try {
+      console.log(`Starting simulation for tokens: ${selectedTokens.join(' → ')} on exchange: ${selectedExchange}`);
       if (!import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL) {
         toast({
           title: "Configuration Error",
@@ -66,6 +67,7 @@ export const SimulationPanel = () => {
         route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC']
       };
 
+      console.log(`Simulation results: Estimated Profit: $${detailedResult.estimatedProfit.toFixed(2)}, Gas Cost: $${detailedResult.gasCost.toFixed(2)}, Slippage: ${(detailedResult.slippage * 100).toFixed(2)}%`);
       setLastSimulation(detailedResult);
 
       toast({
@@ -74,7 +76,7 @@ export const SimulationPanel = () => {
         variant: detailedResult.isProfit ? "default" : "destructive",
       });
     } catch (error) {
-      console.error('Error simulating flash loan:', error);
+      console.error(`Error simulating flash loan for tokens: ${selectedTokens.join(' → ')} on exchange: ${selectedExchange}`, error);
       toast({
         title: "Simulation Failed",
         description: error instanceof Error ? error.message : "Unable to simulate trade at this time",

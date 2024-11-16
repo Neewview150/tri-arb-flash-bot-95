@@ -52,24 +52,28 @@ const getFlashLoanContract = (signer: ethers.Signer, tokens: string[]) => {
 
 export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
+    console.log(`Initiating flash loan for amount: ${ethers.utils.formatEther(amount)} with tokens: ${tokens.join(', ')}`);
     const contract = getFlashLoanContract(signer, tokens);
     const tx = await contract.initiateFlashLoan(amount, tokens);
+    console.log(`Transaction sent: ${tx.hash}`);
     await tx.wait();
-    console.log('Flash loan initiated successfully');
+    console.log(`Flash loan initiated successfully. Transaction confirmed: ${tx.hash}`);
   } catch (error) {
-    console.error('Error initiating flash loan:', error);
+    console.error(`Error initiating flash loan for amount: ${ethers.utils.formatEther(amount)} with tokens: ${tokens.join(', ')}`, error);
     throw new Error('Failed to initiate flash loan: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
 
 export const executeFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
+    console.log(`Executing flash loan for amount: ${ethers.utils.formatEther(amount)} with tokens: ${tokens.join(', ')}`);
     const contract = getFlashLoanContract(signer, tokens);
     const tx = await contract.executeFlashLoan(amount, tokens);
+    console.log(`Transaction sent: ${tx.hash}`);
     await tx.wait();
-    console.log('Flash loan executed successfully');
+    console.log(`Flash loan executed successfully. Transaction confirmed: ${tx.hash}`);
   } catch (error) {
-    console.error('Error executing flash loan:', error);
+    console.error(`Error executing flash loan for amount: ${ethers.utils.formatEther(amount)} with tokens: ${tokens.join(', ')}`, error);
     throw new Error('Failed to execute flash loan: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
