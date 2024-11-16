@@ -27,7 +27,6 @@ const contractABIs = {
 // Initialize a provider
 const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
-// Function to validate private key
 const validatePrivateKey = (privateKey: string | undefined): string => {
   if (!privateKey) {
     throw new Error('VITE_PRIVATE_KEY environment variable is not set');
@@ -51,7 +50,6 @@ const getFlashLoanContract = (signer: ethers.Signer, tokens: string[]) => {
   return new ethers.Contract(address, abi, signer);
 };
 
-// Function to initiate a flash loan
 export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
     const contract = getFlashLoanContract(signer, tokens);
@@ -64,7 +62,6 @@ export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer
   }
 };
 
-// Function to execute a flash loan
 export const executeFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
     const contract = getFlashLoanContract(signer, tokens);
@@ -74,5 +71,33 @@ export const executeFlashLoan = async (amount: bigint, tokens: string[], signer:
   } catch (error) {
     console.error('Error executing flash loan:', error);
     throw new Error('Failed to execute flash loan: ' + (error instanceof Error ? error.message : 'Unknown error'));
+  }
+};
+
+// Function to check contract balance
+export const getContractBalance = async (signer: ethers.Signer) => {
+  try {
+    const contract = getFlashLoanContract(signer, []);
+    const balance = await contract.provider.getBalance(contract.address);
+    console.log('Contract balance:', ethers.utils.formatEther(balance));
+    return balance;
+  } catch (error) {
+    console.error('Error fetching contract balance:', error);
+    throw new Error('Failed to fetch contract balance: ' + (error instanceof Error ? error.message : 'Unknown error'));
+  }
+};
+
+// Function to retrieve loan details
+export const getLoanDetails = async (transactionHash: string, signer: ethers.Signer) => {
+  try {
+    const receipt = await signer.provider.getTransactionReceipt(transactionHash);
+    if (!receipt) {
+      throw new Error('Transaction receipt not found');
+    }
+    console.log('Loan details:', receipt);
+    return receipt;
+  } catch (error) {
+    console.error('Error retrieving loan details:', error);
+    throw new Error('Failed to retrieve loan details: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };

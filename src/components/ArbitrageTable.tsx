@@ -130,6 +130,7 @@ export const ArbitrageTable = () => {
             <TableHead>Time</TableHead>
             <TableHead>AI Recommended</TableHead>
             <TableHead>Actions</TableHead>
+            <TableHead>Details</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -162,10 +163,23 @@ export const ArbitrageTable = () => {
                   Execute
                 </Button>
               </TableCell>
+              <TableCell className="space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleDetails(opp)}
+                >
+                  Details
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
   );
+};
+
+const handleDetails = (opportunity: ArbitrageOpportunity) => {
+  alert(`Details for ${opportunity.tokenA} → ${opportunity.tokenB} → ${opportunity.tokenC} on ${opportunity.exchange}`);
 };

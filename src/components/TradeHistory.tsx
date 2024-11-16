@@ -83,6 +83,8 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
             <TableHead>Profit/Loss</TableHead>
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
+            <TableHead>Trade Duration</TableHead>
+            <TableHead>Slippage</TableHead>
             <TableHead>AI Recommended</TableHead>
           </TableRow>
         </TableHeader>
@@ -97,6 +99,8 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
               <TableCell>${trade.profit.toFixed(2)}</TableCell>
               <TableCell>${trade.gasCost.toFixed(2)}</TableCell>
               <TableCell>{trade.timestamp.toLocaleTimeString()}</TableCell>
+              <TableCell>{trade.duration ? `${trade.duration} mins` : 'N/A'}</TableCell>
+              <TableCell>{trade.slippage ? `${trade.slippage.toFixed(2)}%` : 'N/A'}</TableCell>
               <TableCell>
                 {trade.aiRecommended && <Badge>AI</Badge>}
               </TableCell>

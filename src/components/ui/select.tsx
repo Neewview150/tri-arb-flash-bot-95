@@ -130,6 +130,19 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ))
+// Default option for the select component
+const DefaultSelectItem = ({ className, ...props }) => (
+  <SelectPrimitive.Item
+    className={cn(
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm text-muted-foreground",
+      className
+    )}
+    disabled
+    {...props}
+  >
+    <SelectPrimitive.ItemText>Select an option...</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+);
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
 const SelectSeparator = React.forwardRef<

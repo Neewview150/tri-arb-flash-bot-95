@@ -36,7 +36,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-xl rounded-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
         className
       )}
       {...props}
@@ -106,6 +106,41 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
+const ConfirmationDialog = ({ title, description, onConfirm, onCancel }) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <button className="btn-confirm">Show Confirmation</button>
+    </DialogTrigger>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose onClick={onCancel}>Cancel</DialogClose>
+        <DialogClose onClick={onConfirm}>Confirm</DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
+const ErrorDialog = ({ title, description, onConfirm }) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <button className="btn-error">Show Error</button>
+    </DialogTrigger>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose onClick={onConfirm}>OK</DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);
+
 export {
   Dialog,
   DialogPortal,
@@ -117,4 +152,6 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  ConfirmationDialog,
+  ErrorDialog,
 }

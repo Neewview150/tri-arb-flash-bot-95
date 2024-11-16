@@ -83,7 +83,33 @@ export const SimulationPanel = () => {
     }
   };
 
-  return (
+
+  const handleReset = () => {
+    setAmount('1000');
+    setLastSimulation(null);
+    setSelectedTokens([]);
+    setSelectedExchange('');
+    toast({
+      title: "Reset Successful",
+      description: "Simulation panel has been reset.",
+    });
+  };
+
+  const handleSave = () => {
+    if (lastSimulation) {
+      // Implement save logic here, e.g., save to local storage or backend
+      toast({
+        title: "Save Successful",
+        description: "Simulation results have been saved.",
+      });
+    } else {
+      toast({
+        title: "No Results to Save",
+        description: "Please run a simulation before saving.",
+        variant: "destructive",
+      });
+    }
+  };
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Trade Simulation</h2>
       <div className="space-y-4">
@@ -107,14 +133,29 @@ export const SimulationPanel = () => {
             min="0"
           />
         </div>
-        
 
-        <Button 
-          onClick={handleSimulate}
-          className="w-full bg-primary hover:bg-primary/90"
-        >
-          Simulate Trade
-        </Button>
+        </div>
+        
+        <div className="flex space-x-2">
+          <Button 
+            onClick={handleSimulate}
+            className="flex-1 bg-primary hover:bg-primary/90"
+          >
+            Simulate Trade
+          </Button>
+          <Button 
+            onClick={handleReset}
+            className="flex-1 bg-secondary hover:bg-secondary/90"
+          >
+            Reset
+          </Button>
+          <Button 
+            onClick={handleSave}
+            className="flex-1 bg-accent hover:bg-accent/90"
+          >
+            Save
+          </Button>
+        </div>
         
         {lastSimulation && (
           <div className="mt-4 p-4 rounded-lg bg-secondary/50">
