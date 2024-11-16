@@ -5,7 +5,7 @@ import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { executeFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
-import { analyzeOpportunities } from '@/services/AIService';
+import AIWorkflowAgent from '@/services/AIWorkflowAgent';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
@@ -37,13 +37,14 @@ const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> =>
 export const ArbitrageTable = () => {
   const { toast } = useToast();
 
+  const aiAgent = new AIWorkflowAgent();
   const { data: opportunities, isLoading, error } = useQuery({
     queryKey: ['arbitrageOpportunities'],
     queryFn: fetchArbitrageOpportunities,
     refetchInterval: 5000
   });
 
-  const recommendedOpportunities = analyzeOpportunities(opportunities || []);
+  const recommendedOpportunities = aiAgent.analyzeArbitrage(opportunities || []);
 
   const handleSimulate = (opportunity: ArbitrageOpportunity) => {
     const event = new CustomEvent('simulateArbitrage', { 

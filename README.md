@@ -57,6 +57,22 @@ A React-based application for executing triangular arbitrage trades using flash 
    - Set it as `VITE_PRIVATE_KEY` in `.env`
    - ⚠️ Never share or commit your private key
 
+## AI Agent Feature
+
+The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
+
+### How It Works
+- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
+- Opportunities that exceed this threshold are marked as AI-recommended.
+- Users can view these recommendations in the arbitrage table and simulation panel.
+
+### Interpreting Recommendations
+- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
+- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
+
+### Configuration
+- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
+
 ## Running the Bot
 
 1. Start the development server:
