@@ -28,8 +28,26 @@ export const SimulationPanel = () => {
 
   const handleSimulate = async () => {
     try {
+      if (!import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL) {
+        toast({
+          title: "Configuration Error",
+          description: "Blockchain provider URL is not configured",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!import.meta.env.VITE_PRIVATE_KEY) {
+        toast({
+          title: "Configuration Error",
+          description: "Private key is not configured",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
-      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY ?? '', provider);
+      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
       const amountInWei = ethers.parseUnits(amount, 'ether');
       
       await initiateFlashLoan(amountInWei, selectedTokens, signer);
@@ -53,7 +71,7 @@ export const SimulationPanel = () => {
       console.error('Error simulating flash loan:', error);
       toast({
         title: "Simulation Failed",
-        description: "Unable to simulate trade at this time",
+        description: error instanceof Error ? error.message : "Unable to simulate trade at this time",
         variant: "destructive",
       });
     }

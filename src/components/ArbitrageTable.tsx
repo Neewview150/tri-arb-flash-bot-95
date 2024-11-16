@@ -58,15 +58,33 @@ export const ArbitrageTable = () => {
   };
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
-    toast({
-      title: "Executing Trade",
-      description: "Initiating real trade execution...",
-    });
-    
     try {
+      if (!import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL) {
+        toast({
+          title: "Configuration Error",
+          description: "Blockchain provider URL is not configured",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!import.meta.env.VITE_PRIVATE_KEY) {
+        toast({
+          title: "Configuration Error",
+          description: "Private key is not configured",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Executing Trade",
+        description: "Initiating real trade execution...",
+      });
+      
       const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
-      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY ?? '', provider);
-      const amount = ethers.parseUnits('1000', 'ether'); // Example amount, adjust as needed
+      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
+      const amount = ethers.parseUnits('1000', 'ether');
       await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
       
       toast({
@@ -77,7 +95,7 @@ export const ArbitrageTable = () => {
       console.error('Error executing flash loan:', error);
       toast({
         title: "Execution Failed",
-        description: "There was an error executing the trade.",
+        description: error instanceof Error ? error.message : "There was an error executing the trade.",
         variant: "destructive",
       });
     }

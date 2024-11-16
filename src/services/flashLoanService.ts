@@ -1,15 +1,40 @@
 import { ethers } from 'ethers';
 
 // Configuration for the blockchain provider and contract
-const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL || 'https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID';
-const contractAddress = import.meta.env.VITE_FLASH_LOAN_CONTRACT_ADDRESS || '0xYourFlashLoanContractAddress';
+const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL;
+const contractAddress = import.meta.env.VITE_FLASH_LOAN_CONTRACT_ADDRESS;
+
+if (!providerUrl) {
+  throw new Error('VITE_BLOCKCHAIN_PROVIDER_URL environment variable is not set');
+}
+
+if (!contractAddress) {
+  throw new Error('VITE_FLASH_LOAN_CONTRACT_ADDRESS environment variable is not set');
+}
+
 const contractABI = [
   // ABI of the flash loan contract
-  // Replace with the actual ABI of your flash loan contract
+  "function initiateFlashLoan(uint256 amount, string[] calldata tokens) external",
+  "function executeFlashLoan(uint256 amount, string[] calldata tokens) external"
 ];
 
 // Initialize a provider
 const provider = new ethers.JsonRpcProvider(providerUrl);
+
+// Function to validate private key
+const validatePrivateKey = (privateKey: string | undefined): string => {
+  if (!privateKey) {
+    throw new Error('VITE_PRIVATE_KEY environment variable is not set');
+  }
+  
+  try {
+    // Try to create a wallet with the private key to validate it
+    new ethers.Wallet(privateKey);
+    return privateKey;
+  } catch (error) {
+    throw new Error('Invalid private key format');
+  }
+};
 
 // Function to create a contract instance
 const getFlashLoanContract = (signer: ethers.Signer) => {
