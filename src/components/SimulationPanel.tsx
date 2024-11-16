@@ -4,12 +4,14 @@ import { Select, SelectItem } from '@/components/ui/select';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
+import { Select, SelectItem } from '@/components/ui/select';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<{ tokenA: string; tokenB: string; tokenC: string }>({ tokenA: 'ETH', tokenB: 'USDT', tokenC: 'BTC' });
+  const [exchangeType, setExchangeType] = useState<'centralized' | 'decentralized'>('centralized');
   const [selectedExchange, setSelectedExchange] = useState<string>('');
 
   useEffect(() => {
@@ -67,6 +69,12 @@ export const SimulationPanel = () => {
         )}
         
         <div>
+          <label className="block text-sm mb-2">Exchange Type</label>
+          <Select value={exchangeType} onValueChange={setExchangeType}>
+            <SelectItem value="centralized">Centralized</SelectItem>
+            <SelectItem value="decentralized">Decentralized</SelectItem>
+          </Select>
+        </div>
           <label className="block text-sm mb-2">Flash Loan Amount (USDT)</label>
           <Input
             type="number"
@@ -105,8 +113,21 @@ export const SimulationPanel = () => {
         >
           Simulate Trade
         </Button>
+          onClick={handleSimulate}
         
         {lastSimulation && (
+          <div className="mt-4 p-4 rounded-lg bg-secondary/50">
+            <h3 className="font-medium mb-2">Last Simulation Results</h3>
+            <div className="space-y-2 text-sm">
+              <p>Route: {lastSimulation.route.join(' → ')}</p>
+              <p className={lastSimulation.isProfit ? 'text-success' : 'text-destructive'}>
+                Profit/Loss: ${lastSimulation.estimatedProfit.toFixed(2)}
+              </p>
+              <p>Gas Cost: ${lastSimulation.gasCost.toFixed(2)}</p>
+              <p>Slippage: {(lastSimulation.slippage * 100).toFixed(2)}%</p>
+            </div>
+          </div>
+        )}
           <div className="mt-4 p-4 rounded-lg bg-secondary/50">
             <h3 className="font-medium mb-2">Last Simulation Results</h3>
             <div className="space-y-2 text-sm">

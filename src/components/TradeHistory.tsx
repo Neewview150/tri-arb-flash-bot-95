@@ -1,6 +1,7 @@
 import { TradeHistory as TradeHistoryType } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useQuery } from '@tanstack/react-query';
+import { TradeHistory as TradeHistoryType } from '@/lib/types';
 import { fetchTradeHistory } from '@/lib/tradeHistoryApi';
 
 export const TradeHistory = () => {
@@ -28,6 +29,7 @@ export const TradeHistory = () => {
             <TableHead>Profit/Loss</TableHead>
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
+            <TableHead>Exchange Type</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,6 +43,7 @@ export const TradeHistory = () => {
               <TableCell>${trade.profit.toFixed(2)}</TableCell>
               <TableCell>${trade.gasCost.toFixed(2)}</TableCell>
               <TableCell>{new Date(trade.timestamp).toLocaleTimeString()}</TableCell>
+              <TableCell>{trade.exchangeType}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { executeTrade } from '@/lib/tradeExecution';
@@ -62,32 +63,33 @@ export const ArbitrageTable = () => {
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
     try {
-      toast({
-        title: "Executing Trade",
-        description: "Initiating real trade execution...",
-      });
-
-      const result = await executeTrade(opportunity);
-
-      if (result.success) {
+      try {
         toast({
-          title: "Trade Executed",
-          description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+          title: "Executing Trade",
+          description: "Initiating real trade execution...",
         });
-      } else {
+
+        const result = await executeTrade(opportunity);
+
+        if (result.success) {
+          toast({
+            title: "Trade Executed",
+            description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+          });
+        } else {
+          toast({
+            title: "Trade Failed",
+            description: `Failed to execute trade: ${result.error}`,
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
         toast({
-          title: "Trade Failed",
-          description: `Failed to execute trade: ${result.error}`,
+          title: "Execution Error",
+          description: `An error occurred: ${error.message}`,
           variant: "destructive",
         });
       }
-    } catch (error) {
-      toast({
-        title: "Execution Error",
-        description: `An error occurred: ${error.message}`,
-        variant: "destructive",
-      });
-    }
   };
 
   if (isLoading) {
@@ -103,13 +105,41 @@ export const ArbitrageTable = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Exchange</TableHead>
-            <TableHead>Token Path</TableHead>
-            <TableHead>Profit %</TableHead>
-            <TableHead>Est. Profit</TableHead>
-            <TableHead>Gas Cost</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>
+              <Tooltip content="The exchange where the opportunity is available">
+                Exchange
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="The path of tokens involved in the arbitrage">
+                Token Path
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="The percentage profit expected from the arbitrage">
+                Profit %
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="The estimated profit in USD">
+                Est. Profit
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="The estimated gas cost for executing the trade">
+                Gas Cost
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="The time when the opportunity was identified">
+                Time
+              </Tooltip>
+            </TableHead>
+            <TableHead>
+              <Tooltip content="Actions you can take on this opportunity">
+                Actions
+              </Tooltip>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

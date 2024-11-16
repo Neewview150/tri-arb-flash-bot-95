@@ -22,6 +22,21 @@ export interface TradeOrder {
   type: string;
 }
 
+export interface DexTrade {
+  id: string;
+  tokenA: string;
+  tokenB: string;
+  amount: number;
+  dexName: string;
+  userAddress: string;
+}
+
+export interface DexTradeResponse {
+  success: boolean;
+  transactionHash?: string;
+  error?: string;
+}
+
 export interface TradeHistory {
   id: string;
   type: 'success' | 'failed';
