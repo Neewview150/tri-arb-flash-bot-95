@@ -7,17 +7,14 @@ import { executeFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
-  // Simulated API call - replace with actual API endpoint
-  // This would fetch opportunities across all exchanges and trading pairs
   const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
   const symbols = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'SOL', 'DOT'];
-  
-  // Simulate fetching data from multiple exchanges
+
   const mockOpportunities: ArbitrageOpportunity[] = [];
   
   exchanges.forEach(exchange => {
     symbols.forEach((symbol, index) => {
-      if (Math.random() > 0.8) { // Only show some opportunities for demo
+      if (Math.random() > 0.8) {
         mockOpportunities.push({
           id: `${exchange}-${symbol}-${Date.now()}`,
           tokenA: symbol,
@@ -46,7 +43,6 @@ export const ArbitrageTable = () => {
   });
 
   const handleSimulate = (opportunity: ArbitrageOpportunity) => {
-    // Dispatch event to update simulation panel
     const event = new CustomEvent('simulateArbitrage', { 
       detail: {
         tokens: [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC],
@@ -68,8 +64,9 @@ export const ArbitrageTable = () => {
     });
     
     try {
-      const signer = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
-      const amount = ethers.utils.parseUnits('1000', 'ether'); // Example amount, adjust as needed
+      const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
+      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY ?? '', provider);
+      const amount = ethers.parseUnits('1000', 'ether'); // Example amount, adjust as needed
       await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
       
       toast({

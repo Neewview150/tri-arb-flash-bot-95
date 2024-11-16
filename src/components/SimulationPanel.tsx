@@ -28,8 +28,9 @@ export const SimulationPanel = () => {
 
   const handleSimulate = async () => {
     try {
-      const signer = new ethers.Wallet(process.env.PRIVATE_KEY!, ethers.getDefaultProvider());
-      const amountInWei = ethers.utils.parseUnits(amount, 'ether');
+      const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
+      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY ?? '', provider);
+      const amountInWei = ethers.parseUnits(amount, 'ether');
       
       await initiateFlashLoan(amountInWei, selectedTokens, signer);
       

@@ -17,7 +17,7 @@ const getFlashLoanContract = (signer: ethers.Signer) => {
 };
 
 // Function to initiate a flash loan
-export const initiateFlashLoan = async (amount: ethers.BigNumber, tokens: string[], signer: ethers.Signer) => {
+export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
     const contract = getFlashLoanContract(signer);
     const tx = await contract.initiateFlashLoan(amount, tokens);
@@ -30,7 +30,7 @@ export const initiateFlashLoan = async (amount: ethers.BigNumber, tokens: string
 };
 
 // Function to execute a flash loan
-export const executeFlashLoan = async (amount: ethers.BigNumber, tokens: string[], signer: ethers.Signer) => {
+export const executeFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
     const contract = getFlashLoanContract(signer);
     const tx = await contract.executeFlashLoan(amount, tokens);
