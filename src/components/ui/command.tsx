@@ -111,7 +111,7 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
@@ -119,7 +119,10 @@ const CommandItem = React.forwardRef<
       className
     )}
     {...props}
-  />
+  >
+    {children}
+    <CommandShortcut className="ml-auto">Ctrl+K</CommandShortcut>
+  </CommandPrimitive.Item>
 ))
 
 CommandItem.displayName = CommandPrimitive.Item.displayName
@@ -138,6 +141,7 @@ const CommandShortcut = ({
     />
   )
 }
+// Display name for the CommandShortcut component
 CommandShortcut.displayName = "CommandShortcut"
 
 export {

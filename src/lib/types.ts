@@ -17,6 +17,8 @@ export interface TradeHistory {
   gasCost: number;
   timestamp: Date;
   tokens: string[];
+  duration?: number; // Duration of the trade in minutes
+  slippage?: number; // Slippage percentage
 }
 
 export interface PriceData {
@@ -37,4 +39,18 @@ export interface SimulationRequest {
   amount: string;
   tokens: string[];
   exchange?: string;
+}
+
+export interface MarketSummary {
+  totalTrades: number;
+  successfulTrades: number;
+  failedTrades: number;
+  averageProfit: number;
+}
+
+export interface QuickStats {
+  totalTradesExecuted: number;
+  successfulTrades: number;
+  failedTrades: number;
+  averageProfit: number;
 }

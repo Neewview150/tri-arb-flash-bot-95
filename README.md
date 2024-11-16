@@ -43,6 +43,10 @@ A React-based application for executing triangular arbitrage trades using flash 
 
 ## Configuration
 
+4. **AI Agent Configuration**:
+   - The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file.
+   - To modify the threshold, open `AIService.ts` and change the `profitThreshold` variable to your desired value.
+
 1. **Provider URL**: 
    - Go to your Infura/Alchemy dashboard
    - Copy your project's endpoint URL
@@ -57,6 +61,22 @@ A React-based application for executing triangular arbitrage trades using flash 
    - Set it as `VITE_PRIVATE_KEY` in `.env`
    - ⚠️ Never share or commit your private key
 
+## AI Agent Feature
+
+The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
+
+### How It Works
+- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
+- Opportunities that exceed this threshold are marked as AI-recommended.
+- Users can view these recommendations in the arbitrage table and simulation panel.
+
+### Interpreting Recommendations
+- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
+- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
+
+### Configuration
+- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
+
 ## Running the Bot
 
 1. Start the development server:
@@ -69,7 +89,38 @@ A React-based application for executing triangular arbitrage trades using flash 
    http://localhost:5173
    ```
 
+## AI Agent Feature
+
+The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
+
+### How It Works
+- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
+- Opportunities that exceed this threshold are marked as AI-recommended.
+- Users can view these recommendations in the arbitrage table and simulation panel.
+
+### Interpreting Recommendations
+- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
+- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
+
+### Configuration
+- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
+
 ## Using the Bot
+
+### Enhanced Features
+
+1. **AI Recommendations**:
+   - The arbitrage table now highlights AI-recommended trades based on profitability analysis.
+   - These trades are marked for easy identification and are likely to be profitable.
+
+2. **Detailed Simulation**:
+   - The simulation panel provides a breakdown of potential slippage, network fees, and estimated profits.
+   - Users can view detailed results to make informed decisions before executing trades.
+
+3. **Trade History Management**:
+   - The trade history section now includes sorting, filtering, and pagination.
+   - Users can sort trades by date or profit and filter by success or failure status.
+   - Pagination allows easy navigation through large datasets.
 
 1. **Monitor Opportunities**:
    - The arbitrage table shows real-time opportunities
@@ -95,6 +146,10 @@ A React-based application for executing triangular arbitrage trades using flash 
 - Test thoroughly on testnets first
 
 ## Troubleshooting
+
+3. **AI Agent Issues**:
+   - If AI recommendations are not appearing, ensure the profit threshold is set correctly in `AIService.ts`.
+   - Verify that the AI agent is enabled and configured properly.
 
 1. **Transaction Failures**:
    - Check gas price and limits

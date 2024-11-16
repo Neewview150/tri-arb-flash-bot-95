@@ -24,6 +24,7 @@ export const SimulationPanel = () => {
     return () => {
       window.removeEventListener('simulateArbitrage', handleSimulateArbitrage as EventListener);
     };
+
   }, []);
 
   const handleSimulate = async () => {
@@ -52,20 +53,25 @@ export const SimulationPanel = () => {
       
       await initiateFlashLoan(amountInWei, selectedTokens, signer);
       
-      const mockResult: SimulationResult = {
-        isProfit: Math.random() > 0.5,
-        estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
-        gasCost: Math.random() * 50,
-        slippage: Math.random() * 0.01,
+      const slippage = Math.random() * 0.01; // Simulated slippage
+      const networkFees = Math.random() * 20; // Simulated network fees
+      const estimatedProfit = parseFloat(amount) * (Math.random() * 0.05);
+      const isProfit = estimatedProfit > (networkFees + slippage * parseFloat(amount));
+
+      const detailedResult: SimulationResult = {
+        isProfit,
+        estimatedProfit: isProfit ? estimatedProfit - networkFees - slippage * parseFloat(amount) : -networkFees,
+        gasCost: networkFees,
+        slippage,
         route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC']
       };
-      
-      setLastSimulation(mockResult);
-      
+
+      setLastSimulation(detailedResult);
+
       toast({
-        title: mockResult.isProfit ? "Profitable Trade Found!" : "Trade Not Profitable",
-        description: `Estimated ${mockResult.isProfit ? 'profit' : 'loss'}: $${mockResult.estimatedProfit.toFixed(2)}`,
-        variant: mockResult.isProfit ? "default" : "destructive",
+        title: detailedResult.isProfit ? "Profitable Trade Found!" : "Trade Not Profitable",
+        description: `Estimated ${detailedResult.isProfit ? 'profit' : 'loss'}: $${detailedResult.estimatedProfit.toFixed(2)}\nNetwork Fees: $${networkFees.toFixed(2)}\nSlippage: ${(slippage * 100).toFixed(2)}%`,
+        variant: detailedResult.isProfit ? "default" : "destructive",
       });
     } catch (error) {
       console.error('Error simulating flash loan:', error);
@@ -77,7 +83,33 @@ export const SimulationPanel = () => {
     }
   };
 
-  return (
+
+  const handleReset = () => {
+    setAmount('1000');
+    setLastSimulation(null);
+    setSelectedTokens([]);
+    setSelectedExchange('');
+    toast({
+      title: "Reset Successful",
+      description: "Simulation panel has been reset.",
+    });
+  };
+
+  const handleSave = () => {
+    if (lastSimulation) {
+      // Implement save logic here, e.g., save to local storage or backend
+      toast({
+        title: "Save Successful",
+        description: "Simulation results have been saved.",
+      });
+    } else {
+      toast({
+        title: "No Results to Save",
+        description: "Please run a simulation before saving.",
+        variant: "destructive",
+      });
+    }
+  };
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Trade Simulation</h2>
       <div className="space-y-4">
@@ -101,13 +133,29 @@ export const SimulationPanel = () => {
             min="0"
           />
         </div>
+
+        </div>
         
-        <Button 
-          onClick={handleSimulate}
-          className="w-full bg-primary hover:bg-primary/90"
-        >
-          Simulate Trade
-        </Button>
+        <div className="flex space-x-2">
+          <Button 
+            onClick={handleSimulate}
+            className="flex-1 bg-primary hover:bg-primary/90"
+          >
+            Simulate Trade
+          </Button>
+          <Button 
+            onClick={handleReset}
+            className="flex-1 bg-secondary hover:bg-secondary/90"
+          >
+            Reset
+          </Button>
+          <Button 
+            onClick={handleSave}
+            className="flex-1 bg-accent hover:bg-accent/90"
+          >
+            Save
+          </Button>
+        </div>
         
         {lastSimulation && (
           <div className="mt-4 p-4 rounded-lg bg-secondary/50">
