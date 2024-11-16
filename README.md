@@ -1,25 +1,24 @@
 # Triangular Arbitrage Flash Loan Bot
 
-A React-based application for executing triangular arbitrage trades using flash loans on various DEXs.
+A Python script for executing triangular arbitrage trades using flash loans on Poloniex exchange.
 
 ## Prerequisites
 
-1. **Node.js & npm**
-   - Install Node.js and npm using [nvm (Node Version Manager)](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Python & pip**
+   - Ensure you have Python 3.7 or later installed. You can download it from [python.org](https://www.python.org/downloads/).
+
+2. **CCXT Library**
+   - The script uses the `ccxt` library to interact with the Poloniex exchange. Install it using pip:
    ```sh
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-   nvm install 18
-   nvm use 18
+   pip install ccxt
    ```
 
-2. **Blockchain Provider Account**
-   - Sign up for a free account at [Infura](https://infura.io) or [Alchemy](https://alchemy.com)
-   - Create a new project and copy your provider URL
-
-3. **Crypto Wallet**
-   - Create an Ethereum wallet (e.g., using MetaMask)
-   - Securely store your private key
-   - Fund your wallet with some ETH for gas fees
+3. **Environment Variables**
+   - Set up your Poloniex API credentials as environment variables:
+   ```sh
+   export POLONIEX_API_KEY='your_api_key'
+   export POLONIEX_SECRET='your_secret_key'
+   ```
 
 ## Installation
 
@@ -29,137 +28,35 @@ A React-based application for executing triangular arbitrage trades using flash 
    cd tri-arb-flash-bot
    ```
 
-2. Install dependencies:
+2. Ensure all dependencies are installed:
    ```sh
-   npm install
+   pip install -r requirements.txt
    ```
-
-3. Create a `.env` file in the root directory:
-   ```sh
-   VITE_BLOCKCHAIN_PROVIDER_URL=your_provider_url_here
-   VITE_FLASH_LOAN_CONTRACT_ADDRESS=your_flash_loan_contract_address
-   VITE_PRIVATE_KEY=your_wallet_private_key
-   ```
-
-## Configuration
-
-4. **AI Agent Configuration**:
-   - The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file.
-   - To modify the threshold, open `AIService.ts` and change the `profitThreshold` variable to your desired value.
-
-1. **Provider URL**: 
-   - Go to your Infura/Alchemy dashboard
-   - Copy your project's endpoint URL
-   - Paste it as `VITE_BLOCKCHAIN_PROVIDER_URL` in `.env`
-
-2. **Flash Loan Contract**:
-   - Choose a flash loan protocol (e.g., Aave V3: `0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2`)
-   - Set it as `VITE_FLASH_LOAN_CONTRACT_ADDRESS` in `.env`
-
-3. **Private Key**:
-   - Export your wallet's private key
-   - Set it as `VITE_PRIVATE_KEY` in `.env`
-   - ⚠️ Never share or commit your private key
-
-## AI Agent Feature
-
-The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
-
-### How It Works
-- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
-- Opportunities that exceed this threshold are marked as AI-recommended.
-- Users can view these recommendations in the arbitrage table and simulation panel.
-
-### Interpreting Recommendations
-- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
-- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
-
-### Configuration
-- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
 
 ## Running the Bot
 
-1. Start the development server:
+1. Execute the Python script:
    ```sh
-   npm run dev
+   python tri_arb_flash_bot.py
    ```
 
-2. Open your browser and navigate to:
-   ```
-   http://localhost:5173
-   ```
-
-## AI Agent Feature
-
-The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
-
-### How It Works
-- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
-- Opportunities that exceed this threshold are marked as AI-recommended.
-- Users can view these recommendations in the arbitrage table and simulation panel.
-
-### Interpreting Recommendations
-- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
-- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
-
-### Configuration
-- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
-
-## Using the Bot
-
-### Enhanced Features
-
-1. **AI Recommendations**:
-   - The arbitrage table now highlights AI-recommended trades based on profitability analysis.
-   - These trades are marked for easy identification and are likely to be profitable.
-
-2. **Detailed Simulation**:
-   - The simulation panel provides a breakdown of potential slippage, network fees, and estimated profits.
-   - Users can view detailed results to make informed decisions before executing trades.
-
-3. **Trade History Management**:
-   - The trade history section now includes sorting, filtering, and pagination.
-   - Users can sort trades by date or profit and filter by success or failure status.
-   - Pagination allows easy navigation through large datasets.
-
-1. **Monitor Opportunities**:
-   - The arbitrage table shows real-time opportunities
-   - Profit percentage and estimated profits are displayed
-   - Gas costs are estimated for each trade
-
-2. **Simulate Trades**:
-   - Click "Simulate" on any opportunity
-   - Review the simulation results in the simulation panel
-   - Check estimated profits, gas costs, and slippage
-
-3. **Execute Trades**:
-   - Only execute trades that show profitable simulation results
-   - Click "Execute" to perform the flash loan trade
-   - Monitor the transaction status in your wallet
+2. The script will log arbitrage opportunities and execute trades if profitable opportunities are found.
 
 ## Safety Tips
 
-- Always start with small amounts for testing
-- Monitor gas prices before executing trades
-- Double-check all contract addresses
-- Never share your private key
-- Test thoroughly on testnets first
+- Always start with small amounts for testing.
+- Monitor market conditions and adjust your strategy accordingly.
+- Never share your API credentials.
 
 ## Troubleshooting
 
-3. **AI Agent Issues**:
-   - If AI recommendations are not appearing, ensure the profit threshold is set correctly in `AIService.ts`.
-   - Verify that the AI agent is enabled and configured properly.
+1. **Connection Issues**:
+   - Verify your internet connection.
+   - Ensure your API credentials are correct.
 
-1. **Transaction Failures**:
-   - Check gas price and limits
-   - Verify contract addresses
-   - Ensure sufficient ETH for gas
-
-2. **Connection Issues**:
-   - Verify provider URL
-   - Check network status
-   - Confirm wallet connection
+2. **Execution Errors**:
+   - Check the logs for detailed error messages.
+   - Ensure the `ccxt` library is up to date.
 
 ## Support
 
