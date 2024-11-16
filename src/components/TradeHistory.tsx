@@ -30,6 +30,9 @@ export const TradeHistory = () => {
             <TableHead>Gas Cost</TableHead>
             <TableHead>Time</TableHead>
             <TableHead>Exchange Type</TableHead>
+            <TableHead>Flash Loan Amount</TableHead>
+            <TableHead>Interest Rate</TableHead>
+            <TableHead>Duration</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -44,6 +47,9 @@ export const TradeHistory = () => {
               <TableCell>${trade.gasCost.toFixed(2)}</TableCell>
               <TableCell>{new Date(trade.timestamp).toLocaleTimeString()}</TableCell>
               <TableCell>{trade.exchangeType}</TableCell>
+              <TableCell>${trade.flashLoanAmount.toFixed(2)}</TableCell>
+              <TableCell>{trade.interestRate.toFixed(2)}%</TableCell>
+              <TableCell>{trade.duration} blocks</TableCell>
             </TableRow>
           ))}
         </TableBody>

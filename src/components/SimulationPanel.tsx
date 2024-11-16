@@ -12,6 +12,8 @@ export const SimulationPanel = () => {
   const [duration, setDuration] = useState('1');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
+  const [interestRate, setInterestRate] = useState('0.05');
+  const [duration, setDuration] = useState('1');
   const [selectedTokens, setSelectedTokens] = useState<{ tokenA: string; tokenB: string; tokenC: string }>({ tokenA: 'ETH', tokenB: 'USDT', tokenC: 'BTC' });
   const [exchangeType, setExchangeType] = useState<'centralized' | 'decentralized'>('centralized');
   const [selectedExchange, setSelectedExchange] = useState<string>('');
@@ -37,7 +39,7 @@ export const SimulationPanel = () => {
         estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
         gasCost: Math.random() * 50,
         slippage: Math.random() * 0.01,
-        route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC'],
+        route: [selectedTokens.tokenA, selectedTokens.tokenB, selectedTokens.tokenC],
         interestRate: parseFloat(interestRate),
         duration: parseInt(duration, 10)
       };
@@ -102,6 +104,8 @@ export const SimulationPanel = () => {
             min="1"
           />
         </div>
+
+        <div>
           <label className="block text-sm mb-2">Flash Loan Amount (USDT)</label>
           <Input
             type="number"

@@ -3,7 +3,10 @@ import { PriceChart } from '@/components/PriceChart';
 import { SimulationPanel } from '@/components/SimulationPanel';
 import { TradeHistory } from '@/components/TradeHistory';
 import { mockPriceData, mockTradeHistory } from '@/lib/mockData';
+import { useState } from 'react';
+import { requestFlashLoan, handleRepayment } from '@/lib/flashLoanService';
 
+const Index = () => {
 const Index = () => {
   const [exchangeType, setExchangeType] = useState<'centralized' | 'decentralized'>('centralized');
 
@@ -24,11 +27,24 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ArbitrageTable />
+        <ArbitrageTable 
+          exchangeType={exchangeType} 
+          onExecuteTrade={handleExecuteTrade} 
+        />
         <TradeHistory trades={mockTradeHistory} />
       </div>
     </div>
   );
+};
+
+const handleExecuteTrade = async (params) => {
+  const loanResult = await requestFlashLoan(params);
+  if (loanResult.success) {
+    // Execute trade logic here
+    await handleRepayment(params);
+  } else {
+    console.error('Flash loan request failed:', loanResult.error);
+  }
 };
 
 export default Index;
