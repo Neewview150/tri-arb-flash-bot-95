@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
+import { initiateFlashLoan } from '@/services/flashLoanService';
+import { ethers } from 'ethers';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
@@ -26,7 +28,11 @@ export const SimulationPanel = () => {
 
   const handleSimulate = async () => {
     try {
-      // For demo purposes, we'll create a mock simulation result
+      const signer = new ethers.Wallet(process.env.PRIVATE_KEY!, ethers.getDefaultProvider());
+      const amountInWei = ethers.utils.parseUnits(amount, 'ether');
+      
+      await initiateFlashLoan(amountInWei, selectedTokens, signer);
+      
       const mockResult: SimulationResult = {
         isProfit: Math.random() > 0.5,
         estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
@@ -43,6 +49,7 @@ export const SimulationPanel = () => {
         variant: mockResult.isProfit ? "default" : "destructive",
       });
     } catch (error) {
+      console.error('Error simulating flash loan:', error);
       toast({
         title: "Simulation Failed",
         description: "Unable to simulate trade at this time",

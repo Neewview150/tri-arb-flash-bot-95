@@ -1,11 +1,29 @@
 import { TradeHistory as TradeHistoryType } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
 
 interface TradeHistoryProps {
   trades: TradeHistoryType[];
 }
 
 export const TradeHistory = ({ trades }: TradeHistoryProps) => {
+  const [tradeHistory, setTradeHistory] = useState<TradeHistoryType[]>(trades);
+
+  useEffect(() => {
+    const fetchTradeHistory = async () => {
+      try {
+        // Replace with actual API call or blockchain interaction
+        const response = await fetch('/api/trade-history');
+        const data = await response.json();
+        setTradeHistory(data);
+      } catch (error) {
+        console.error('Error fetching trade history:', error);
+      }
+    };
+
+    fetchTradeHistory();
+  }, []);
+
   return (
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Trade History</h2>
@@ -19,7 +37,7 @@ export const TradeHistory = ({ trades }: TradeHistoryProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {trades.map((trade) => (
+          {tradeHistory.map((trade) => (
             <TableRow key={trade.id}>
               <TableCell>
                 <span className={trade.type === 'success' ? 'text-success' : 'text-destructive'}>
