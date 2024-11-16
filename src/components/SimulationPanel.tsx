@@ -4,7 +4,6 @@ import { Select, SelectItem } from '@/components/ui/select';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
-import { Select, SelectItem } from '@/components/ui/select';
 
 export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
@@ -12,8 +11,8 @@ export const SimulationPanel = () => {
   const [duration, setDuration] = useState('1');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
-  const [interestRate, setInterestRate] = useState('0.05');
-  const [duration, setDuration] = useState('1');
+  const [amount, setAmount] = useState('1000');
+  const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
   const [selectedTokens, setSelectedTokens] = useState<{ tokenA: string; tokenB: string; tokenC: string }>({ tokenA: 'ETH', tokenB: 'USDT', tokenC: 'BTC' });
   const [exchangeType, setExchangeType] = useState<'centralized' | 'decentralized'>('centralized');
   const [selectedExchange, setSelectedExchange] = useState<string>('');
@@ -33,15 +32,12 @@ export const SimulationPanel = () => {
 
   const handleSimulate = async () => {
     try {
-      // For demo purposes, we'll create a mock simulation result
       const mockResult: SimulationResult = {
         isProfit: Math.random() > 0.5,
         estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
         gasCost: Math.random() * 50,
         slippage: Math.random() * 0.01,
         route: [selectedTokens.tokenA, selectedTokens.tokenB, selectedTokens.tokenC],
-        interestRate: parseFloat(interestRate),
-        duration: parseInt(duration, 10)
       };
       
       setLastSimulation(mockResult);
@@ -64,16 +60,6 @@ export const SimulationPanel = () => {
     <div className="glass-panel p-4">
       <h2 className="text-xl font-semibold mb-4">Trade Simulation</h2>
       <div className="space-y-4">
-        {selectedTokens.length > 0 && (
-          <div className="p-2 bg-secondary/20 rounded-lg">
-            <p className="text-sm font-medium">Selected Route:</p>
-            <p className="text-sm">{selectedTokens.join(' → ')}</p>
-            {selectedExchange && (
-              <p className="text-sm mt-1">Exchange: {selectedExchange}</p>
-            )}
-          </div>
-        )}
-        
         <div>
           <label className="block text-sm mb-2">Exchange Type</label>
           <Select value={exchangeType} onValueChange={setExchangeType}>

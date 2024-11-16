@@ -4,8 +4,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { executeTrade } from '@/lib/tradeExecution';
-import { requestFlashLoan } from '@/lib/flashLoanService';
+import { executeTrade } from '@/services/tradeExecutionService';
+import { requestFlashLoan } from '@/services/flashLoanService';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   // Simulated API call - replace with actual API endpoint
@@ -85,7 +85,10 @@ export const ArbitrageTable = () => {
         description: "Flash loan obtained, executing trade...",
       });
 
-      const tradeResult = await executeTrade(opportunity);
+      const tradeResult = await executeTrade(opportunity).catch(error => {
+        console.error('Trade execution error:', error);
+        return { success: false, error: error.message };
+      });
 
       if (tradeResult.success) {
         toast({
@@ -100,9 +103,10 @@ export const ArbitrageTable = () => {
         });
       }
     } catch (error) {
+      console.error('Execution error:', error);
       toast({
         title: "Execution Error",
-        description: `An error occurred: ${error.message}`,
+        description: "An unexpected error occurred during trade execution.",
         variant: "destructive",
       });
     }
@@ -122,39 +126,25 @@ export const ArbitrageTable = () => {
         <TableHeader>
           <TableRow>
             <TableHead>
-              <Tooltip content="The exchange where the opportunity is available">
-                Exchange
-              </Tooltip>
+              <Tooltip content="The exchange where the opportunity is available">Exchange</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="The path of tokens involved in the arbitrage">
-                Token Path
-              </Tooltip>
+              <Tooltip content="The path of tokens involved in the arbitrage">Token Path</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="The percentage profit expected from the arbitrage">
-                Profit %
-              </Tooltip>
+              <Tooltip content="The percentage profit expected from the arbitrage">Profit %</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="The estimated profit in USD">
-                Est. Profit
-              </Tooltip>
+              <Tooltip content="The estimated profit in USD">Est. Profit</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="The estimated gas cost for executing the trade">
-                Gas Cost
-              </Tooltip>
+              <Tooltip content="The estimated gas cost for executing the trade">Gas Cost</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="The time when the opportunity was identified">
-                Time
-              </Tooltip>
+              <Tooltip content="The time when the opportunity was identified">Time</Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="Actions you can take on this opportunity">
-                Actions
-              </Tooltip>
+              <Tooltip content="Actions you can take on this opportunity">Actions</Tooltip>
             </TableHead>
           </TableRow>
         </TableHeader>

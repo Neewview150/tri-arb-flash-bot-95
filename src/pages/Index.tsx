@@ -4,11 +4,30 @@ import { SimulationPanel } from '@/components/SimulationPanel';
 import { TradeHistory } from '@/components/TradeHistory';
 import { mockPriceData, mockTradeHistory } from '@/lib/mockData';
 import { useState } from 'react';
-import { requestFlashLoan, handleRepayment } from '@/lib/flashLoanService';
+import { requestFlashLoan, handleRepayment } from '@/services/flashLoanService';
+import { executeTrade } from '@/services/tradeExecutionService';
 
 const Index = () => {
 const Index = () => {
   const [exchangeType, setExchangeType] = useState<'centralized' | 'decentralized'>('centralized');
+
+  const handleExecuteTrade = async (params) => {
+    try {
+      const loanResult = await requestFlashLoan(params);
+      if (loanResult.success) {
+        const tradeResult = await executeTrade(params);
+        if (tradeResult.success) {
+          await handleRepayment(params);
+        } else {
+          console.error('Trade execution failed:', tradeResult.error);
+        }
+      } else {
+        console.error('Flash loan request failed:', loanResult.error);
+      }
+    } catch (error) {
+      console.error('Error during trade execution:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen p-6 space-y-6">
@@ -35,16 +54,6 @@ const Index = () => {
       </div>
     </div>
   );
-};
-
-const handleExecuteTrade = async (params) => {
-  const loanResult = await requestFlashLoan(params);
-  if (loanResult.success) {
-    // Execute trade logic here
-    await handleRepayment(params);
-  } else {
-    console.error('Flash loan request failed:', loanResult.error);
-  }
 };
 
 export default Index;

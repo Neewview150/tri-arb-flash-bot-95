@@ -31,10 +31,29 @@ export interface DexTrade {
   userAddress: string;
 }
 
+export interface DexTradeRequest {
+  tokenA: string;
+  tokenB: string;
+  amount: number;
+  dexName: string;
+}
+
 export interface DexTradeResponse {
   success: boolean;
   transactionHash?: string;
   error?: string;
+}
+
+export interface DexTradingPair {
+  baseToken: string;
+  quoteToken: string;
+  dexName: string;
+}
+
+export interface DexOrderBookEntry {
+  price: number;
+  amount: number;
+  side: 'buy' | 'sell';
 }
 
 export interface TradeHistory {
