@@ -1,53 +1,66 @@
 import { ethers } from 'ethers';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-// Configuration for the blockchain provider and contract
-const providerUrl = import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL;
-const contractAddress = import.meta.env.VITE_FLASH_LOAN_CONTRACT_ADDRESS;
-
-if (!providerUrl) {
-  throw new Error('VITE_BLOCKCHAIN_PROVIDER_URL environment variable is not set');
-}
-
-if (!contractAddress) {
-  throw new Error('VITE_FLASH_LOAN_CONTRACT_ADDRESS environment variable is not set');
-}
-
-const contractABI = [
-  // ABI of the flash loan contract
-  "function initiateFlashLoan(uint256 amount, string[] calldata tokens) external",
-  "function executeFlashLoan(uint256 amount, string[] calldata tokens) external"
+// Equalizer Finance Flash Loan Contract ABI
+const equalizerABI = [
+  "function flashLoan(address[] calldata assets, uint256[] calldata amounts, uint256[] calldata modes, address onBehalfOf, bytes calldata params, uint16 referralCode) external",
+  "function ADDRESSES_PROVIDER() external view returns (address)",
+  "function POOL() external view returns (address)",
+  "event FlashLoan(address indexed target, address indexed initiator, address indexed asset, uint256 amount, uint256 premium, uint16 referralCode)",
+  "function getReserveData(address asset) external view returns (tuple(uint256 configuration, uint128 liquidityIndex, uint128 currentLiquidityRate, uint128 variableBorrowIndex, uint128 currentVariableBorrowRate, uint128 currentStableBorrowRate, uint40 lastUpdateTimestamp, uint16 id, address aTokenAddress, address stableDebtTokenAddress, address variableDebtTokenAddress, address interestRateStrategyAddress, uint128 baseLTV, uint128 liquidationThreshold, uint128 liquidationBonus, uint128 borrowCap, uint128 supplyCap, uint128 debtCeiling, uint128 debtCeilingDecimals, uint128 eModeLTV, uint128 eModeLiquidationThreshold, uint128 eModeLiquidationBonus, address eModePriceSource, string label))"
 ];
 
-// Initialize a provider
-const provider = new ethers.JsonRpcProvider(providerUrl);
+// Equalizer Finance Contract Address on Ethereum Mainnet
+const EQUALIZER_ADDRESS = '0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2';
 
-// Function to validate private key
-const validatePrivateKey = (privateKey: string | undefined): string => {
-  if (!privateKey) {
-    throw new Error('VITE_PRIVATE_KEY environment variable is not set');
-  }
-  
+// Initialize provider
+const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
+
+// Function to get real-time token prices from DEXes
+const getTokenPrice = async (tokenAddress: string): Promise<number> => {
   try {
-    // Try to create a wallet with the private key to validate it
-    new ethers.Wallet(privateKey);
-    return privateKey;
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokenAddress}&vs_currencies=usd`);
+    const data = await response.json();
+    return data[tokenAddress.toLowerCase()].usd;
   } catch (error) {
-    throw new Error('Invalid private key format');
+    console.error('Error fetching token price:', error);
+    throw error;
   }
 };
 
-// Function to create a contract instance
-const getFlashLoanContract = (signer: ethers.Signer) => {
-  return new ethers.Contract(contractAddress, contractABI, signer);
+// Function to check if flash loan is profitable
+const isProfitable = async (tokenPath: string[], amount: bigint): Promise<boolean> => {
+  try {
+    const prices = await Promise.all(tokenPath.map(token => getTokenPrice(token)));
+    let expectedReturn = Number(amount);
+    
+    for (let i = 0; i < prices.length - 1; i++) {
+      expectedReturn = expectedReturn * (prices[i + 1] / prices[i]);
+    }
+    
+    // Account for flash loan fee (0.09% on Equalizer)
+    const flashLoanFee = Number(amount) * 0.0009;
+    return expectedReturn > (Number(amount) + flashLoanFee);
+  } catch (error) {
+    console.error('Error checking profitability:', error);
+    throw error;
+  }
 };
 
-// Function to initiate a flash loan
+// Function to initiate a flash loan simulation
 export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
-    const contract = getFlashLoanContract(signer);
-    const tx = await contract.initiateFlashLoan(amount, tokens);
-    await tx.wait();
-    console.log('Flash loan initiated successfully');
+    const profitable = await isProfitable(tokens, amount);
+    if (!profitable) {
+      throw new Error('Trade would not be profitable after fees');
+    }
+    
+    return {
+      profitable,
+      estimatedProfit: await calculateEstimatedProfit(amount, tokens),
+      gasEstimate: await estimateGasCost(tokens)
+    };
   } catch (error) {
     console.error('Error initiating flash loan:', error);
     throw error;
@@ -57,12 +70,59 @@ export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer
 // Function to execute a flash loan
 export const executeFlashLoan = async (amount: bigint, tokens: string[], signer: ethers.Signer) => {
   try {
-    const contract = getFlashLoanContract(signer);
-    const tx = await contract.executeFlashLoan(amount, tokens);
+    const equalizerContract = new ethers.Contract(EQUALIZER_ADDRESS, equalizerABI, signer);
+    
+    // Prepare flash loan parameters
+    const assets = tokens;
+    const amounts = [amount];
+    const modes = [0]; // 0 = no debt, 1 = stable, 2 = variable
+    const onBehalfOf = await signer.getAddress();
+    const params = ethers.toUtf8Bytes('');
+    const referralCode = 0;
+
+    // Execute flash loan
+    const tx = await equalizerContract.flashLoan(
+      assets,
+      amounts,
+      modes,
+      onBehalfOf,
+      params,
+      referralCode
+    );
+
     await tx.wait();
-    console.log('Flash loan executed successfully');
+    return tx;
   } catch (error) {
     console.error('Error executing flash loan:', error);
+    throw error;
+  }
+};
+
+// Helper function to calculate estimated profit
+const calculateEstimatedProfit = async (amount: bigint, tokens: string[]): Promise<number> => {
+  const prices = await Promise.all(tokens.map(token => getTokenPrice(token)));
+  let expectedReturn = Number(amount);
+  
+  for (let i = 0; i < prices.length - 1; i++) {
+    expectedReturn = expectedReturn * (prices[i + 1] / prices[i]);
+  }
+  
+  const flashLoanFee = Number(amount) * 0.0009;
+  return expectedReturn - Number(amount) - flashLoanFee;
+};
+
+// Helper function to estimate gas cost
+const estimateGasCost = async (tokens: string[]): Promise<number> => {
+  // Rough estimate based on token path length
+  const baseGas = 150000;
+  const gasPerToken = 50000;
+  const estimatedGas = baseGas + (tokens.length * gasPerToken);
+  
+  try {
+    const gasPrice = await provider.getFeeData();
+    return Number(gasPrice.gasPrice) * estimatedGas / 1e18;
+  } catch (error) {
+    console.error('Error estimating gas:', error);
     throw error;
   }
 };
