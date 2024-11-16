@@ -1,99 +1,119 @@
-# Welcome to your Lovable project
+# Triangular Arbitrage Flash Loan Bot
 
-## Project info
+A React-based application for executing triangular arbitrage trades using flash loans on various DEXs.
 
-**URL**: https://lovable.dev/projects/3c9cc6a5-69cc-4b56-bc7a-6c771905ac15
+## Prerequisites
 
-## How can I edit this code?
+1. **Node.js & npm**
+   - Install Node.js and npm using [nvm (Node Version Manager)](https://github.com/nvm-sh/nvm#installing-and-updating)
+   ```sh
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   nvm install 18
+   nvm use 18
+   ```
 
-There are several ways of editing your application.
+2. **Blockchain Provider Account**
+   - Sign up for a free account at [Infura](https://infura.io) or [Alchemy](https://alchemy.com)
+   - Create a new project and copy your provider URL
 
-**Use Lovable**
+3. **Crypto Wallet**
+   - Create an Ethereum wallet (e.g., using MetaMask)
+   - Securely store your private key
+   - Fund your wallet with some ETH for gas fees
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3c9cc6a5-69cc-4b56-bc7a-6c771905ac15) and start prompting.
+## Installation
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone the repository:
+   ```sh
+   git clone <your-repo-url>
+   cd tri-arb-flash-bot
+   ```
 
-**Use your preferred IDE**
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. Create a `.env` file in the root directory:
+   ```sh
+   VITE_BLOCKCHAIN_PROVIDER_URL=your_provider_url_here
+   VITE_FLASH_LOAN_CONTRACT_ADDRESS=your_flash_loan_contract_address
+   VITE_PRIVATE_KEY=your_wallet_private_key
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Configuration
 
-Follow these steps:
+1. **Provider URL**: 
+   - Go to your Infura/Alchemy dashboard
+   - Copy your project's endpoint URL
+   - Paste it as `VITE_BLOCKCHAIN_PROVIDER_URL` in `.env`
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Flash Loan Contract**:
+   - Choose a flash loan protocol (e.g., Aave V3: `0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2`)
+   - Set it as `VITE_FLASH_LOAN_CONTRACT_ADDRESS` in `.env`
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **Private Key**:
+   - Export your wallet's private key
+   - Set it as `VITE_PRIVATE_KEY` in `.env`
+   - ⚠️ Never share or commit your private key
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Running the Bot
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+1. Start the development server:
+   ```sh
+   npm run dev
+   ```
 
-**Edit a file directly in GitHub**
+2. Open your browser and navigate to:
+   ```
+   http://localhost:5173
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Using the Bot
 
-**Use GitHub Codespaces**
+1. **Monitor Opportunities**:
+   - The arbitrage table shows real-time opportunities
+   - Profit percentage and estimated profits are displayed
+   - Gas costs are estimated for each trade
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. **Simulate Trades**:
+   - Click "Simulate" on any opportunity
+   - Review the simulation results in the simulation panel
+   - Check estimated profits, gas costs, and slippage
 
-## What technologies are used for this project?
+3. **Execute Trades**:
+   - Only execute trades that show profitable simulation results
+   - Click "Execute" to perform the flash loan trade
+   - Monitor the transaction status in your wallet
 
-This project is built with .
+## Safety Tips
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Always start with small amounts for testing
+- Monitor gas prices before executing trades
+- Double-check all contract addresses
+- Never share your private key
+- Test thoroughly on testnets first
 
-## How can I deploy this project?
-## Setting up Blockchain Provider and Environment Variables
+## Troubleshooting
 
-To execute live trades using flash loans, you need to set up a blockchain provider and configure necessary environment variables.
+1. **Transaction Failures**:
+   - Check gas price and limits
+   - Verify contract addresses
+   - Ensure sufficient ETH for gas
 
-### Step 1: Set up Blockchain Provider
+2. **Connection Issues**:
+   - Verify provider URL
+   - Check network status
+   - Confirm wallet connection
 
-- Choose a blockchain provider like Infura or Alchemy.
-- Sign up and create a project to get your provider URL.
+## Support
 
-### Step 2: Configure Environment Variables
+For issues and feature requests, please open an issue in the GitHub repository.
 
-Create a `.env` file in the root of your project and add the following variables:
+## License
 
-```sh
-BLOCKCHAIN_PROVIDER_URL=<YOUR_PROVIDER_URL>
-FLASH_LOAN_CONTRACT_ADDRESS=<YOUR_FLASH_LOAN_CONTRACT_ADDRESS>
-PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
-```
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- Replace `<YOUR_PROVIDER_URL>` with the URL from your blockchain provider.
-- Replace `<YOUR_FLASH_LOAN_CONTRACT_ADDRESS>` with the address of your deployed flash loan contract.
-- Replace `<YOUR_WALLET_PRIVATE_KEY>` with your wallet's private key (ensure this is kept secure).
+## Disclaimer
 
-## Deploying and Interacting with Smart Contracts
-
-To deploy and interact with smart contracts for flash loans, follow these steps:
-
-1. **Deploy the Smart Contract**: Use a tool like Remix or Hardhat to deploy your flash loan smart contract to the blockchain.
-2. **Interact with the Contract**: Use the provided functions in `flashLoanService.ts` to initiate and execute flash loans.
-
-## How can I deploy this project?
-Simply open [Lovable](https://lovable.dev/projects/3c9cc6a5-69cc-4b56-bc7a-6c771905ac15) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Trading cryptocurrencies carries risk. This bot is for educational purposes only. Always do your own research and trade responsibly.
