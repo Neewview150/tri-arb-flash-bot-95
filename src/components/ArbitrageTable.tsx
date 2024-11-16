@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/components/ui/use-toast';
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { executeTrade } from '@/lib/tradeExecution';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   // Simulated API call - replace with actual API endpoint
@@ -60,19 +61,33 @@ export const ArbitrageTable = () => {
   };
 
   const handleExecute = async (opportunity: ArbitrageOpportunity) => {
-    toast({
-      title: "Executing Trade",
-      description: "Initiating real trade execution...",
-    });
-    
-    // Here you would implement the actual trade execution
-    // For demo purposes, we'll just show a success message
-    setTimeout(() => {
+    try {
       toast({
-        title: "Trade Executed",
-        description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+        title: "Executing Trade",
+        description: "Initiating real trade execution...",
       });
-    }, 2000);
+
+      const result = await executeTrade(opportunity);
+
+      if (result.success) {
+        toast({
+          title: "Trade Executed",
+          description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
+        });
+      } else {
+        toast({
+          title: "Trade Failed",
+          description: `Failed to execute trade: ${result.error}`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Execution Error",
+        description: `An error occurred: ${error.message}`,
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {

@@ -10,6 +10,18 @@ export interface ArbitrageOpportunity {
   exchange: string;
 }
 
+export interface TradeExecutionResult {
+  success: boolean;
+  error?: string;
+}
+
+export interface TradeOrder {
+  authToken: string;
+  pair: string;
+  amount: number;
+  type: string;
+}
+
 export interface TradeHistory {
   id: string;
   type: 'success' | 'failed';

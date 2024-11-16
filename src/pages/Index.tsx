@@ -2,7 +2,6 @@ import { ArbitrageTable } from '@/components/ArbitrageTable';
 import { PriceChart } from '@/components/PriceChart';
 import { SimulationPanel } from '@/components/SimulationPanel';
 import { TradeHistory } from '@/components/TradeHistory';
-import { mockPriceData, mockTradeHistory } from '@/lib/mockData';
 
 const Index = () => {
   return (
@@ -14,7 +13,7 @@ const Index = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <PriceChart data={mockPriceData} />
+          <PriceChart />
         </div>
         <div>
           <SimulationPanel />
@@ -23,7 +22,7 @@ const Index = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ArbitrageTable />
-        <TradeHistory trades={mockTradeHistory} />
+        <TradeHistory />
       </div>
     </div>
   );

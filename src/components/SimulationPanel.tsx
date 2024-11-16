@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectItem } from '@/components/ui/select';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { SimulationResult } from '@/lib/types';
@@ -8,7 +9,7 @@ export const SimulationPanel = () => {
   const [amount, setAmount] = useState('1000');
   const { toast } = useToast();
   const [lastSimulation, setLastSimulation] = useState<SimulationResult | null>(null);
-  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
+  const [selectedTokens, setSelectedTokens] = useState<{ tokenA: string; tokenB: string; tokenC: string }>({ tokenA: 'ETH', tokenB: 'USDT', tokenC: 'BTC' });
   const [selectedExchange, setSelectedExchange] = useState<string>('');
 
   useEffect(() => {
@@ -76,7 +77,29 @@ export const SimulationPanel = () => {
           />
         </div>
         
-        <Button 
+        <div>
+          <label className="block text-sm mb-2">Select Tokens</label>
+          <div className="flex space-x-2">
+            <Select value={selectedTokens.tokenA} onValueChange={(value) => setSelectedTokens((prev) => ({ ...prev, tokenA: value }))}>
+              <SelectItem value="ETH">ETH</SelectItem>
+              <SelectItem value="BTC">BTC</SelectItem>
+              <SelectItem value="USDT">USDT</SelectItem>
+              <SelectItem value="BNB">BNB</SelectItem>
+            </Select>
+            <Select value={selectedTokens.tokenB} onValueChange={(value) => setSelectedTokens((prev) => ({ ...prev, tokenB: value }))}>
+              <SelectItem value="ETH">ETH</SelectItem>
+              <SelectItem value="BTC">BTC</SelectItem>
+              <SelectItem value="USDT">USDT</SelectItem>
+              <SelectItem value="BNB">BNB</SelectItem>
+            </Select>
+            <Select value={selectedTokens.tokenC} onValueChange={(value) => setSelectedTokens((prev) => ({ ...prev, tokenC: value }))}>
+              <SelectItem value="ETH">ETH</SelectItem>
+              <SelectItem value="BTC">BTC</SelectItem>
+              <SelectItem value="USDT">USDT</SelectItem>
+              <SelectItem value="BNB">BNB</SelectItem>
+            </Select>
+          </div>
+        </div>
           onClick={handleSimulate}
           className="w-full bg-primary hover:bg-primary/90"
         >
