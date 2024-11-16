@@ -8,24 +8,37 @@ import { cn } from "@/lib/utils"
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <NavigationMenuPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative z-10 flex max-w-max flex-1 items-center justify-center",
-      className
-    )}
-    {...props}
-  >
-    <NavigationMenuList>
-      <AdditionalMenuItem label="Dashboard" href="/dashboard" />
-      <AdditionalMenuItem label="Settings" href="/settings" />
-      <AdditionalMenuItem label="Help" href="/help" />
-    </NavigationMenuList>
-    {children}
-    <NavigationMenuViewport />
-  </NavigationMenuPrimitive.Root>
-))
+>(({ className, children, ...props }, ref) => {
+  const [menuItems, setMenuItems] = React.useState([
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Settings", href: "/settings" },
+    { label: "Help", href: "/help" },
+  ]);
+
+  // Function to dynamically update menu items
+  const updateMenuItems = (newItems) => {
+    setMenuItems(newItems);
+  };
+
+  return (
+    <NavigationMenuPrimitive.Root
+      ref={ref}
+      className={cn(
+        "relative z-10 flex max-w-max flex-1 items-center justify-center",
+        className
+      )}
+      {...props}
+    >
+      <NavigationMenuList>
+        {menuItems.map((item, index) => (
+          <AdditionalMenuItem key={index} label={item.label} href={item.href} />
+        ))}
+      </NavigationMenuList>
+      {children}
+      <NavigationMenuViewport />
+    </NavigationMenuPrimitive.Root>
+  );
+})
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
 
 const NavigationMenuList = React.forwardRef<

@@ -57,7 +57,12 @@ export const initiateFlashLoan = async (amount: bigint, tokens: string[], signer
     await tx.wait();
     console.log('Flash loan initiated successfully');
   } catch (error) {
-    console.error('Error initiating flash loan:', error);
+    console.error('Error initiating flash loan:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace available',
+      tokens,
+      amount: ethers.utils.formatEther(amount),
+    });
     throw new Error('Failed to initiate flash loan: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
@@ -69,7 +74,12 @@ export const executeFlashLoan = async (amount: bigint, tokens: string[], signer:
     await tx.wait();
     console.log('Flash loan executed successfully');
   } catch (error) {
-    console.error('Error executing flash loan:', error);
+    console.error('Error executing flash loan:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace available',
+      tokens,
+      amount: ethers.utils.formatEther(amount),
+    });
     throw new Error('Failed to execute flash loan: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
@@ -82,7 +92,10 @@ export const getContractBalance = async (signer: ethers.Signer) => {
     console.log('Contract balance:', ethers.utils.formatEther(balance));
     return balance;
   } catch (error) {
-    console.error('Error fetching contract balance:', error);
+    console.error('Error fetching contract balance:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace available',
+    });
     throw new Error('Failed to fetch contract balance: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
@@ -97,7 +110,11 @@ export const getLoanDetails = async (transactionHash: string, signer: ethers.Sig
     console.log('Loan details:', receipt);
     return receipt;
   } catch (error) {
-    console.error('Error retrieving loan details:', error);
+    console.error('Error retrieving loan details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace available',
+      transactionHash,
+    });
     throw new Error('Failed to retrieve loan details: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };

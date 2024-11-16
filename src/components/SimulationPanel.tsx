@@ -75,9 +75,12 @@ export const SimulationPanel = () => {
       });
     } catch (error) {
       console.error('Error simulating flash loan:', error);
+
+      // Enhanced error logging
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred during the simulation.";
       toast({
         title: "Simulation Failed",
-        description: error instanceof Error ? error.message : "Unable to simulate trade at this time",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -98,6 +101,7 @@ export const SimulationPanel = () => {
   const handleSave = () => {
     if (lastSimulation) {
       // Implement save logic here, e.g., save to local storage or backend
+      console.log('Saving simulation results:', lastSimulation);
       toast({
         title: "Save Successful",
         description: "Simulation results have been saved.",

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { executeFlashLoan } from '@/services/flashLoanService';
 import { ethers } from 'ethers';
 import AIWorkflowAgent from '@/services/AIWorkflowAgent';
+import { saveTradeToHistory } from '@/services/tradeHistoryService'; // New import for saving trades
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   try {
@@ -95,12 +96,35 @@ export const ArbitrageTable = () => {
       const amount = ethers.parseUnits('1000', 'ether');
       await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
 
+      // Save executed trade to history
+      saveTradeToHistory({
+        id: opportunity.id,
+        type: 'success',
+        profit: netProfit,
+        gasCost: opportunity.gasEstimate,
+        timestamp: new Date(),
+        tokens: [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC],
+        aiRecommended: recommendedOpportunities.includes(opportunity),
+      });
+
       toast({
         title: "Trade Executed",
         description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
       });
     } catch (error) {
       console.error('Error executing flash loan:', error);
+
+      // Save failed trade to history
+      saveTradeToHistory({
+        id: opportunity.id,
+        type: 'failed',
+        profit: 0,
+        gasCost: opportunity.gasEstimate,
+        timestamp: new Date(),
+        tokens: [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC],
+        aiRecommended: recommendedOpportunities.includes(opportunity),
+      });
+
       toast({
         title: "Execution Failed",
         description: error instanceof Error ? error.message : "There was an error executing the trade.",

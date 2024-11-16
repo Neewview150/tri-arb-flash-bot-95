@@ -1,5 +1,5 @@
 import { PriceData } from '@/lib/types';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Brush, CartesianGrid } from 'recharts';
 
 interface PriceChartProps {
   data: PriceData[];
@@ -9,8 +9,15 @@ export const PriceChart = ({ data }: PriceChartProps) => {
   return (
     <div className="glass-panel p-4 h-[400px]">
       <h2 className="text-xl font-semibold mb-4">Price Chart</h2>
+      <div className="flex justify-between mb-4">
+        <button className="btn-filter">1H</button>
+        <button className="btn-filter">24H</button>
+        <button className="btn-filter">7D</button>
+        <button className="btn-filter">1M</button>
+      </div>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
           <XAxis 
             dataKey="timestamp" 
             tickFormatter={(time) => new Date(time).toLocaleTimeString()}
@@ -27,6 +34,7 @@ export const PriceChart = ({ data }: PriceChartProps) => {
             strokeWidth={2}
             dot={false}
           />
+          <Brush dataKey="timestamp" height={30} stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
     </div>
