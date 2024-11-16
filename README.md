@@ -1,15 +1,12 @@
 # Triangular Arbitrage Flash Loan Bot
 
-A React-based application for executing triangular arbitrage trades using flash loans on various DEXs.
+A Python script for executing triangular arbitrage trades using flash loans on various DEXs.
 
 ## Prerequisites
 
-1. **Node.js & npm**
-   - Install Node.js and npm using [nvm (Node Version Manager)](https://github.com/nvm-sh/nvm#installing-and-updating)
-   ```sh
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-   nvm install 18
-   nvm use 18
+1. **Python & pip**
+   - Install Python (version 3.8 or higher) and pip.
+   - It's recommended to use a virtual environment to manage dependencies.
    ```
 
 2. **Blockchain Provider Account**
@@ -31,7 +28,7 @@ A React-based application for executing triangular arbitrage trades using flash 
 
 2. Install dependencies:
    ```sh
-   npm install
+   pip install -r requirements.txt
    ```
 
 3. Create a `.env` file in the root directory:
@@ -41,11 +38,14 @@ A React-based application for executing triangular arbitrage trades using flash 
    VITE_PRIVATE_KEY=your_wallet_private_key
    ```
 
-## Configuration
+## Running the Bot
 
-4. **AI Agent Configuration**:
-   - The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file.
-   - To modify the threshold, open `AIService.ts` and change the `profitThreshold` variable to your desired value.
+1. Execute the Python script:
+   ```sh
+   python flash_loan_bot.py
+   ```
+
+## Configuration
 
 1. **Provider URL**: 
    - Go to your Infura/Alchemy dashboard
@@ -60,50 +60,6 @@ A React-based application for executing triangular arbitrage trades using flash 
    - Export your wallet's private key
    - Set it as `VITE_PRIVATE_KEY` in `.env`
    - ⚠️ Never share or commit your private key
-
-## AI Agent Feature
-
-The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
-
-### How It Works
-- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
-- Opportunities that exceed this threshold are marked as AI-recommended.
-- Users can view these recommendations in the arbitrage table and simulation panel.
-
-### Interpreting Recommendations
-- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
-- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
-
-### Configuration
-- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
-
-## Running the Bot
-
-1. Start the development server:
-   ```sh
-   npm run dev
-   ```
-
-2. Open your browser and navigate to:
-   ```
-   http://localhost:5173
-   ```
-
-## AI Agent Feature
-
-The AI agent is integrated into the bot to enhance decision-making by analyzing arbitrage opportunities. It evaluates each opportunity based on a predefined profit threshold and recommends trades that are likely to be profitable.
-
-### How It Works
-- The AI agent scans the list of arbitrage opportunities and filters them based on a profit percentage threshold.
-- Opportunities that exceed this threshold are marked as AI-recommended.
-- Users can view these recommendations in the arbitrage table and simulation panel.
-
-### Interpreting Recommendations
-- AI-recommended trades are highlighted in the UI, allowing users to quickly identify potentially profitable trades.
-- The simulation panel displays expected profit margins for AI-recommended trades, helping users make informed decisions.
-
-### Configuration
-- The AI agent uses a default profit threshold of 1.0%. This can be adjusted in the `AIService.ts` file if needed.
 
 ## Using the Bot
 
