@@ -8,30 +8,21 @@ import { ethers } from 'ethers';
 import AIWorkflowAgent from '@/services/AIWorkflowAgent';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
-  const exchanges = ['Binance', 'Poloniex', 'Kraken', 'Coinbase'];
-  const symbols = ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'SOL', 'DOT'];
-
-  const mockOpportunities: ArbitrageOpportunity[] = [];
-  
-  exchanges.forEach(exchange => {
-    symbols.forEach((symbol, index) => {
-      if (Math.random() > 0.8) {
-        mockOpportunities.push({
-          id: `${exchange}-${symbol}-${Date.now()}`,
-          tokenA: symbol,
-          tokenB: symbols[(index + 1) % symbols.length],
-          tokenC: symbols[(index + 2) % symbols.length],
-          profitPercentage: Math.random() * 2,
-          estimatedProfit: Math.random() * 1000,
-          gasEstimate: Math.random() * 100,
-          timestamp: new Date(),
-          exchange: exchange
-        });
-      }
-    });
-  });
-  
-  return mockOpportunities.sort((a, b) => b.profitPercentage - a.profitPercentage);
+  try {
+    const response = await fetch('https://api.example.com/arbitrage-opportunities');
+    if (!response.ok) {
+      throw new Error('Failed to fetch arbitrage opportunities');
+    }
+    const data = await response.json();
+    // Validate data structure
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid data format');
+    }
+    return data.sort((a, b) => b.profitPercentage - a.profitPercentage);
+  } catch (error) {
+    console.error('Error fetching arbitrage opportunities:', error);
+    return [];
+  }
 };
 
 export const ArbitrageTable = () => {
@@ -84,16 +75,26 @@ export const ArbitrageTable = () => {
         return;
       }
 
+      const netProfit = opportunity.estimatedProfit - opportunity.gasEstimate;
+      if (netProfit <= 0) {
+        toast({
+          title: "Unprofitable Trade",
+          description: "The trade is not profitable after considering gas costs.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Executing Trade",
         description: "Initiating real trade execution...",
       });
-      
-      const provider = new ethers.JsonRpcProvider(import.meta.env.VITE_BLOCKCHAIN_PROVIDER_URL);
-      const signer = new ethers.Wallet(import.meta.env.VITE_PRIVATE_KEY, provider);
+
+      const provider = new ethers.JsonRpcProvider(providerUrl);
+      const signer = new ethers.Wallet(privateKey, provider);
       const amount = ethers.parseUnits('1000', 'ether');
       await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
-      
+
       toast({
         title: "Trade Executed",
         description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,

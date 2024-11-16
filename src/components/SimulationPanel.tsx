@@ -53,20 +53,25 @@ export const SimulationPanel = () => {
       
       await initiateFlashLoan(amountInWei, selectedTokens, signer);
       
-      const mockResult: SimulationResult = {
-        isProfit: Math.random() > 0.5,
-        estimatedProfit: parseFloat(amount) * (Math.random() * 0.05),
-        gasCost: Math.random() * 50,
-        slippage: Math.random() * 0.01,
+      const slippage = Math.random() * 0.01; // Simulated slippage
+      const networkFees = Math.random() * 20; // Simulated network fees
+      const estimatedProfit = parseFloat(amount) * (Math.random() * 0.05);
+      const isProfit = estimatedProfit > (networkFees + slippage * parseFloat(amount));
+
+      const detailedResult: SimulationResult = {
+        isProfit,
+        estimatedProfit: isProfit ? estimatedProfit - networkFees - slippage * parseFloat(amount) : -networkFees,
+        gasCost: networkFees,
+        slippage,
         route: selectedTokens.length ? selectedTokens : ['ETH', 'USDT', 'BTC']
       };
-      
-      setLastSimulation(mockResult);
-      
+
+      setLastSimulation(detailedResult);
+
       toast({
-        title: mockResult.isProfit ? "Profitable Trade Found!" : "Trade Not Profitable",
-        description: `Estimated ${mockResult.isProfit ? 'profit' : 'loss'}: $${mockResult.estimatedProfit.toFixed(2)}`,
-        variant: mockResult.isProfit ? "default" : "destructive",
+        title: detailedResult.isProfit ? "Profitable Trade Found!" : "Trade Not Profitable",
+        description: `Estimated ${detailedResult.isProfit ? 'profit' : 'loss'}: $${detailedResult.estimatedProfit.toFixed(2)}\nNetwork Fees: $${networkFees.toFixed(2)}\nSlippage: ${(slippage * 100).toFixed(2)}%`,
+        variant: detailedResult.isProfit ? "default" : "destructive",
       });
     } catch (error) {
       console.error('Error simulating flash loan:', error);
