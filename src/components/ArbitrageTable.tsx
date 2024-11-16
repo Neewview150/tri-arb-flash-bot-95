@@ -3,6 +3,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/components/ui/use-toast';
 import { ArbitrageOpportunity } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { executeFlashLoan } from '@/services/flashLoanService';
+import { ethers } from 'ethers';
 
 const fetchArbitrageOpportunities = async (): Promise<ArbitrageOpportunity[]> => {
   // Simulated API call - replace with actual API endpoint
@@ -65,14 +67,23 @@ export const ArbitrageTable = () => {
       description: "Initiating real trade execution...",
     });
     
-    // Here you would implement the actual trade execution
-    // For demo purposes, we'll just show a success message
-    setTimeout(() => {
+    try {
+      const signer = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
+      const amount = ethers.utils.parseUnits('1000', 'ether'); // Example amount, adjust as needed
+      await executeFlashLoan(amount, [opportunity.tokenA, opportunity.tokenB, opportunity.tokenC], signer);
+      
       toast({
         title: "Trade Executed",
         description: `Successfully executed trade for ${opportunity.tokenA}-${opportunity.tokenB}-${opportunity.tokenC}`,
       });
-    }, 2000);
+    } catch (error) {
+      console.error('Error executing flash loan:', error);
+      toast({
+        title: "Execution Failed",
+        description: "There was an error executing the trade.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {

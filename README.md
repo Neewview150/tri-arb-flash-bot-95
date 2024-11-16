@@ -61,7 +61,37 @@ This project is built with .
 - Tailwind CSS
 
 ## How can I deploy this project?
+## Setting up Blockchain Provider and Environment Variables
 
+To execute live trades using flash loans, you need to set up a blockchain provider and configure necessary environment variables.
+
+### Step 1: Set up Blockchain Provider
+
+- Choose a blockchain provider like Infura or Alchemy.
+- Sign up and create a project to get your provider URL.
+
+### Step 2: Configure Environment Variables
+
+Create a `.env` file in the root of your project and add the following variables:
+
+```sh
+BLOCKCHAIN_PROVIDER_URL=<YOUR_PROVIDER_URL>
+FLASH_LOAN_CONTRACT_ADDRESS=<YOUR_FLASH_LOAN_CONTRACT_ADDRESS>
+PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
+```
+
+- Replace `<YOUR_PROVIDER_URL>` with the URL from your blockchain provider.
+- Replace `<YOUR_FLASH_LOAN_CONTRACT_ADDRESS>` with the address of your deployed flash loan contract.
+- Replace `<YOUR_WALLET_PRIVATE_KEY>` with your wallet's private key (ensure this is kept secure).
+
+## Deploying and Interacting with Smart Contracts
+
+To deploy and interact with smart contracts for flash loans, follow these steps:
+
+1. **Deploy the Smart Contract**: Use a tool like Remix or Hardhat to deploy your flash loan smart contract to the blockchain.
+2. **Interact with the Contract**: Use the provided functions in `flashLoanService.ts` to initiate and execute flash loans.
+
+## How can I deploy this project?
 Simply open [Lovable](https://lovable.dev/projects/3c9cc6a5-69cc-4b56-bc7a-6c771905ac15) and click on Share -> Publish.
 
 ## I want to use a custom domain - is that possible?
